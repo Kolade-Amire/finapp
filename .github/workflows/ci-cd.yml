@@ -18,6 +18,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
       - name: Make Maven wrapper executable
         working-directory: ./backend
         run: chmod +x mvnw
