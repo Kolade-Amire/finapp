@@ -18,6 +18,9 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: Make Maven wrapper executable
+        working-directory: ./backend
+        run: chmod +x mvnw
 
       - name: Build and Test Backend
         working-directory: ./backend
@@ -43,7 +46,9 @@ jobs:
 
       - name: Install Dependencies
         working-directory: ./frontend
-        run: npm install
+        run: |
+          npm install
+          npm install --save-dev jest @testing-library/react @testing-library/jest-dom
 
       - name: Run Frontend Tests
         working-directory: ./frontend
