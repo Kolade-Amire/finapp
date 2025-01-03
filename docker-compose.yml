@@ -1,0 +1,62 @@
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    env_file:
+      - ./backend/.env.prod
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "${DB_USERNAME}" ]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
+
+  backend:
+    build: ./backend
+    env_file:
+      - ./backend/.env.prod
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_USER: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - postgres
+    networks:
+      - backend-network
+      - frontend-network
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
+
+  frontend:
+    build: ./frontend
+    env_file:
+      - ./frontend/.env.production
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    networks:
+      - frontend-network
+    depends_on:
+      - backend
+
+networks:
+  backend-network:
+  frontend-network:
+
+volumes:
+  postgres_data:
