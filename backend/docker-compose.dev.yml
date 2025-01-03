@@ -1,7 +1,9 @@
 
 services:
   postgres:
-    image: postgres:15-alpine
+    image: postgres:15.10
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USERNAME}
@@ -13,3 +15,4 @@ services:
 
 volumes:
   postgres_dev_data:
+    driver: local
