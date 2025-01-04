@@ -1,5 +1,4 @@
-
-import {describe, it} from "node:test";
+import { describe, it, expect } from '@jest/globals';
 
 describe('Sample Test', () => {
     it('should pass', () => {

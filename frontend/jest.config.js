@@ -1,13 +1,15 @@
 module.exports = {
-    preset: 'ts-jest',
-    testEnvironment: 'jsdom',
+    testEnvironment: 'jest-environment-jsdom',
     transform: {
         '^.+\\.(ts|tsx)$': 'ts-jest',
         '^.+\\.(js|jsx)$': 'babel-jest',
     },
-    setupFilesAfterEnv: ['@testing-library/jest-dom/extend-expect'],
-    testPathIgnorePatterns: ['/node_modules/', '/.next/'],
+    transformIgnorePatterns: [
+        "/node_modules/(?!(@testing-library)/)" // This allows jest to transform files inside certain node_modules
+    ],
     moduleNameMapper: {
-        '^@/(.*)$': '<rootDir>/src/$1',
+        '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     },
+    setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+    testPathIgnorePatterns:['/node_modules/', '/.next/'],
 };
