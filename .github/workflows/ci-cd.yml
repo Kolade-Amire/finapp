@@ -11,7 +11,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Create .env.prod from secrets
+        run: |
+            echo DB_URL=${{ secrets.DB_URL }} >> .env.prod
+            echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env.prod
+            echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env.prod
+            echo DB_NAME=${{ secrets.DB_NAME }} >> .env.prod
+            echo SERVER_PORT=${{ secrets.SERVER_PORT }} >> .env.prod
+
+      - name: Create .env.production from secrets
+        run: |
+          echo NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }} >> .env.production 
 
       - name: Set up JDK
         uses: actions/setup-java@v3
