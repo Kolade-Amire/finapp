@@ -2,6 +2,9 @@ spring:
   mvc:
     problemdetails:
       enabled: true
+  session:
+    redis:
+      flush-mode: on-save
   docker:
     compose:
       file: docker-compose.dev.yml
@@ -17,6 +20,11 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+      password: ${REDIS_PASSWORD}
 
 server:
   port: 8080
