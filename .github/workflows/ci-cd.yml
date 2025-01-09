@@ -14,6 +14,8 @@ jobs:
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_USERNAME: ${{ secrets.DB_USERNAME }}
       DB_NAME: ${{ secrets.DB_NAME }}
+      REDIS_HOST: ${{ secrets.REDIS_HOST }}
+      REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
 
     steps:
       - name: Check out code
@@ -25,6 +27,8 @@ jobs:
             echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
             echo "DB_USERNAME=${DB_USERNAME}" >> .env
             echo "DB_NAME=${DB_NAME}" >> .env
+            echo "REDIS_HOST=${REDIS_HOST}" >> .env
+            echo "REDIS_PASSWORD=${REDIS_PASSWORD}" >> .env
 
       - name: Set up JDK
         uses: actions/setup-java@v3
@@ -89,6 +93,8 @@ jobs:
       DB_USERNAME: ${{ secrets.DB_USERNAME }}
       DB_NAME: ${{ secrets.DB_NAME }}
       NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+      REDIS_HOST: ${{ secrets.REDIS_HOST }}
+      REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
 
     steps:
       - uses: actions/checkout@v3
@@ -100,6 +106,8 @@ jobs:
           echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
           echo "DB_USERNAME=${DB_USERNAME}" >> .env
           echo "DB_NAME=${DB_NAME}" >> .env
+          echo "REDIS_HOST=${REDIS_HOST}" >> .env
+          echo "REDIS_PASSWORD=${REDIS_PASSWORD}" >> .env
 
       - name: Create frontend env file
         working-directory: ./frontend
@@ -108,8 +116,8 @@ jobs:
 
       - name: Build Backend Docker Image
         working-directory: ./backend
-        run: docker build -t backend-app .
+        run: docker build -t backend-app:${{ github.sha }} .
 
       - name: Build Frontend Docker Image
         working-directory: ./frontend
-        run: docker build -t frontend-app .
+        run: docker build -t frontend-app:${{ github.sha }} .
