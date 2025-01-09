@@ -37,3 +37,6 @@ build/
 .env.production
 .env.*
 !.env.example
+
+docker-compose.dev.yml
+/src/main/resources/application-dev.yml

@@ -5,8 +5,7 @@ COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
 COPY src src
-#COPY .env.prod .env
-COPY ./backend/.env .env
+COPY .env .env
 
 
 RUN chmod +x ./mvnw
