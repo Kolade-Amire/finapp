@@ -9,22 +9,22 @@ on:
 jobs:
   backend-tests:
     runs-on: ubuntu-latest
+    env:
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_NAME: ${{ secrets.DB_NAME }}
 
     steps:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Create .env from secrets
+      - name: Create backend env file
         run: |
-            echo DB_URL=${{ secrets.DB_URL }} >> ./backend/.env
-            echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> ./backend/.env
-            echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> ./backend/.env
-            echo DB_NAME=${{ secrets.DB_NAME }} >> ./backend/.env
-            echo SERVER_PORT=${{ secrets.SERVER_PORT }} >> ./backend/.env
-
-      - name: Create .env.production from secrets
-        run: |
-          echo NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }} >> .env.production 
+            echo "DB_URL=${DB_URL}" >> .env
+            echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
+            echo "DB_USERNAME=${DB_USERNAME}" >> .env
+            echo "DB_NAME=${DB_NAME}" >> .env
 
       - name: Set up JDK
         uses: actions/setup-java@v3
@@ -48,7 +48,9 @@ jobs:
           ./mvnw jacoco:report
 
   frontend-tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-
+    env:
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
 
     steps:
       - uses: actions/checkout@v3
@@ -57,6 +59,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+
+      - name: Create frontend env file
+        working-directory: ./frontend
+        run: |
+          echo "NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}" >> .env
 
       - name: Install Dependencies
         working-directory: ./frontend
@@ -76,6 +83,12 @@ jobs:
     needs: [backend-tests, frontend-tests]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
+    env:
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
 
     steps:
       - uses: actions/checkout@v3
@@ -89,8 +102,18 @@ jobs:
             exit 1
           fi
 
-      - name: Copy .env file to backend
-        run: cp ./backend/.env ./backend/.env
+      - name: Create backend env file
+        working-directory: ./backend
+        run: |
+          echo "DB_URL=${DB_URL}" >> .env
+          echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
+          echo "DB_USERNAME=${DB_USERNAME}" >> .env
+          echo "DB_NAME=${DB_NAME}" >> .env
+
+      - name: Create frontend env file
+        working-directory: ./frontend
+        run: |
+          echo "NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}" >> .env
 
       - name: Build Backend Docker Image
         working-directory: ./backend
