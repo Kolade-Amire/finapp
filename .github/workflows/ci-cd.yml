@@ -42,6 +42,8 @@ jobs:
 
       - name: Build and Test Backend
         working-directory: ./backend
+        env:
+          SPRING_PROFILES_ACTIVE: test
         run: |
           ./mvnw clean verify
           ./mvnw test
