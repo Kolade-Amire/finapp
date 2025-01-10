@@ -43,7 +43,10 @@ public class User {
     private LocalDateTime passwordLastChangedDate;
 
     @Column(nullable = false)
-    private boolean isBlocked;
+    private boolean isAccountLocked;
+
+    @Column(nullable = false)
+    private boolean isAccountExpired;
 
     @Column(nullable = false)
     private boolean isEmailVerified;
