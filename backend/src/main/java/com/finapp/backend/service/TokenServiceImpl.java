@@ -19,6 +19,13 @@ public class TokenService {
         );
     }
 
+    public Token findByToken(String token) {
+        return tokenRepository.findByToken(token).orElseThrow(
+                () -> new TokenException(String.format("Could not retrieve token: %s ", token)
+                )
+        );
+    }
+
     public void saveToken(Token token) {
         try {
             tokenRepository.save(token);
