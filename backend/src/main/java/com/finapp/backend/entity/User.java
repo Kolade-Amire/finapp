@@ -23,6 +23,11 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    @Column(nullable = false)
+    private String firstname;
+
+    @Column(nullable = false)
+    private String lastname;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -31,7 +36,9 @@ public class User {
     private String password;
 
     @Column(nullable = false, length = 15)
-    private String phone_number;
+    private String phoneNumber;
+
+    private String profilePictureUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -39,6 +46,8 @@ public class User {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    private LocalDateTime lastLoginAt;
 
     private LocalDateTime passwordLastChangedDate;
 

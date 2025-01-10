@@ -8,10 +8,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class TokenService {
+public class TokenServiceImpl implements TokenService {
 
     private final RedisTokenRepository tokenRepository;
 
+    @Override
     public Token findByUserId(String userId) {
         return tokenRepository.findByUserId(userId).orElseThrow(
                 () -> new TokenException(String.format("Could not retrieve token for user with id: %s ", userId)
@@ -19,6 +20,7 @@ public class TokenService {
         );
     }
 
+    @Override
     public Token findByToken(String token) {
         return tokenRepository.findByToken(token).orElseThrow(
                 () -> new TokenException(String.format("Could not retrieve token: %s ", token)
@@ -26,6 +28,7 @@ public class TokenService {
         );
     }
 
+    @Override
     public void saveToken(Token token) {
         try {
             tokenRepository.save(token);
@@ -34,6 +37,7 @@ public class TokenService {
         }
     }
 
+    @Override
     public void deleteTokenByUserId(String userId) {
         var token = findByUserId(userId);
         tokenRepository.delete(token);
