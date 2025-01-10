@@ -138,6 +138,14 @@
 			<artifactId>guava</artifactId>
 			<version>32.0.0-android</version>
 		</dependency>
+
+		<!-- PhoneNumber Validation -->
+		<dependency>
+			<groupId>com.googlecode.libphonenumber</groupId>
+			<artifactId>libphonenumber</artifactId>
+			<version>8.13.52</version> <!-- Use the latest stable version -->
+		</dependency>
+
 	</dependencies>
 
 
