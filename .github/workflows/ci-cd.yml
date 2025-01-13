@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, develop, staging ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, develop, staging ]
 
 jobs:
   backend-tests:
@@ -98,7 +98,6 @@ jobs:
   docker-build:
     needs: [backend-tests, frontend-tests]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
     env:
       DB_URL: ${{ secrets.DB_URL }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
