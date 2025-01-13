@@ -1,5 +1,7 @@
 package com.finapp.backend.security;
 
+import com.finapp.backend.security.service.CustomUserDetailsService;
+import com.finapp.backend.security.service.LoginAttemptService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;

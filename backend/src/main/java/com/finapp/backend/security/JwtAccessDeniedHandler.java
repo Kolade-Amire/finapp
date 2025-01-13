@@ -1,12 +1,12 @@
 package com.finapp.backend.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.finapp.backend.util.AppConstants;
-import com.finapp.backend.util.HttpResponse;
-import jakarta.servlet.RequestDispatcher;
+import com.finapp.backend.utils.AppConstants;
+import com.finapp.backend.dto.HttpResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -18,10 +18,12 @@ import java.io.OutputStream;
 import java.time.LocalDateTime;
 
 @Component
+@RequiredArgsConstructor
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
+    private final ObjectMapper objectMapper;
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
         HttpResponse httpResponse = HttpResponse.builder()
                 .httpStatusCode(HttpStatus.UNAUTHORIZED.value())
                 .httpStatus(HttpStatus.UNAUTHORIZED)
@@ -32,10 +34,8 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        OutputStream outputStream = response.getOutputStream();
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(outputStream, httpResponse);
-        outputStream.flush();
+
+        objectMapper.writeValue(response.getOutputStream(), httpResponse);
 
     }
 

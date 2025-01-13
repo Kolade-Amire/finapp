@@ -1,7 +1,6 @@
 package com.finapp.backend.controller;
 
-import com.finapp.backend.util.AppConstants;
-import com.finapp.backend.util.HttpResponse;
+import com.finapp.backend.dto.HttpResponse;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.web.servlet.error.ErrorController;

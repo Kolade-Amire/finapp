@@ -1,9 +1,11 @@
 package com.finapp.backend.security;
 
-import com.finapp.backend.entity.Token;
-import com.finapp.backend.entity.UserPrincipal;
-import com.finapp.backend.service.TokenService;
-import com.finapp.backend.util.AppConstants;
+import com.finapp.backend.domain.Token;
+import com.finapp.backend.domain.UserPrincipal;
+import com.finapp.backend.interfaces.service.TokenService;
+import com.finapp.backend.security.service.CustomUserDetailsService;
+import com.finapp.backend.security.service.JwtService;
+import com.finapp.backend.utils.AppConstants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

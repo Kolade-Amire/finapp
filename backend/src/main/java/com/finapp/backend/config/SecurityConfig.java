@@ -2,7 +2,7 @@ package com.finapp.backend.config;
 
 import com.finapp.backend.security.JwtAuthenticationEntryPoint;
 import com.finapp.backend.security.JwtAuthenticationFilter;
-import com.finapp.backend.util.AppConstants;
+import com.finapp.backend.utils.AppConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -77,9 +77,6 @@ public class SecurityConfig {
 
 
     @Bean
-    PasswordEncoder passwordEncoder() {return new BCryptPasswordEncoder();}
-
-    @Bean
     public AuthenticationManager authenticationManager (AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
@@ -89,10 +86,6 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-//        config.setAllowedOriginPatterns(List.of(
-//                "https://accounts.google.com",
-//                "https://*.google.com",
-//                "https://*.googleusercontent.com"));
         config.addAllowedHeader("*");
         config.addAllowedMethod("GET");
         config.addAllowedMethod("POST");

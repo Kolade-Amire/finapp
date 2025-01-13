@@ -1,6 +1,6 @@
 package com.finapp.backend.exception;
 
-import com.finapp.backend.util.AppConstants;
+import com.finapp.backend.utils.AppConstants;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
@@ -23,7 +23,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -121,23 +120,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problemDetail.setTitle("Validation Failed");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
         problemDetail.setDetail("One or more validation errors occurred");
-        problemDetail.setProperties(Map.of("errors", errorMessages));
-
-        return new ResponseEntity<>(problemDetail, HttpStatus.BAD_REQUEST);
-    }
-
-
-    @ExceptionHandler(BindException.class)
-    public ResponseEntity<ProblemDetail> handleBindException(BindException exception, HttpServletRequest request) {
-        List<String> errorMessages = exception.getAllErrors()
-                .stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .toList();
-
-        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        problemDetail.setTitle("Validation Failed");
-        problemDetail.setDetail("Binding errors occurred");
-        problemDetail.setInstance(URI.create(request.getRequestURI()));
         problemDetail.setProperties(Map.of("errors", errorMessages));
 
         return new ResponseEntity<>(problemDetail, HttpStatus.BAD_REQUEST);

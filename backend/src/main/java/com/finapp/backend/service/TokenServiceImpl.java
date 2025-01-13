@@ -1,8 +1,9 @@
 package com.finapp.backend.service;
 
-import com.finapp.backend.entity.Token;
+import com.finapp.backend.domain.Token;
 import com.finapp.backend.exception.TokenException;
-import com.finapp.backend.repository.RedisTokenRepository;
+import com.finapp.backend.interfaces.repository.RedisTokenRepository;
+import com.finapp.backend.interfaces.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

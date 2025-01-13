@@ -1,16 +1,14 @@
 package com.finapp.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.finapp.backend.util.HttpResponse;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Builder
 @Setter
+@Getter
 @ToString
 @AllArgsConstructor
+@NoArgsConstructor
 public class AuthenticationResponse {
 
     private HttpResponse httpResponse;

@@ -4,9 +4,9 @@ import com.finapp.backend.dto.AuthenticationRequest;
 import com.finapp.backend.dto.AuthenticationResponse;
 import com.finapp.backend.dto.RegistrationRequest;
 import com.finapp.backend.dto.RegistrationResponse;
-import com.finapp.backend.security.LogoutService;
-import com.finapp.backend.service.AuthenticationService;
-import com.finapp.backend.util.AppConstants;
+import com.finapp.backend.security.service.LogoutService;
+import com.finapp.backend.service.AuthenticationServiceImpl;
+import com.finapp.backend.utils.AppConstants;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,18 +24,18 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthenticationController {
 
-    private final AuthenticationService authenticationService;
+    private final AuthenticationServiceImpl authenticationServiceImpl;
     private final LogoutService logoutService;
 
     @PostMapping("/register")
     public ResponseEntity<RegistrationResponse> register(@RequestBody RegistrationRequest request){
-        return ResponseEntity.ok(authenticationService.register(request));
+        return ResponseEntity.ok(authenticationServiceImpl.register(request));
     }
 
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request){
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+        return ResponseEntity.ok(authenticationServiceImpl.authenticate(request));
     }
 
     @PostMapping("/refresh")
@@ -43,7 +43,7 @@ public class AuthenticationController {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException {
-            authenticationService.refreshAccessToken(request, response);
+            authenticationServiceImpl.refreshAccessToken(request, response);
     }
 
     @PostMapping("/logout")

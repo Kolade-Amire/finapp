@@ -1,13 +1,13 @@
 package com.finapp.backend.dto;
 
-import com.finapp.backend.util.HttpResponse;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.ToString;
+import lombok.*;
 
 @Builder
 @ToString
 @AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
 public class RegistrationResponse {
     private HttpResponse httpResponse;
     private String accessToken;

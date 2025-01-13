@@ -1,14 +1,14 @@
 package com.finapp.backend.dto;
 
-import com.finapp.backend.util.Validations;
+import com.finapp.backend.utils.Validations;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 @Builder
 @Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class RegistrationRequest {
 
     private String firstname;

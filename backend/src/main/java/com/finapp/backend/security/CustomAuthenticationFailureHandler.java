@@ -10,7 +10,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import static com.finapp.backend.util.AppConstants.ERROR_URL;
+import static com.finapp.backend.utils.AppConstants.ERROR_URL;
 
 @Component
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {

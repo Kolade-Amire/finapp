@@ -1,9 +1,10 @@
 package com.finapp.backend.service;
 
-import com.finapp.backend.entity.User;
+import com.finapp.backend.domain.User;
 import com.finapp.backend.exception.SaveEntityException;
-import com.finapp.backend.repository.UserRepository;
-import com.finapp.backend.util.AppConstants;
+import com.finapp.backend.interfaces.repository.UserRepository;
+import com.finapp.backend.interfaces.service.UserService;
+import com.finapp.backend.utils.AppConstants;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
