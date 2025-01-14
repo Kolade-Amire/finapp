@@ -6,13 +6,12 @@ import lombok.*;
 @Builder
 @Setter
 @Getter
-@ToString
+@ToString(exclude = "accessToken")
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthenticationResponse {
 
     private HttpResponse httpResponse;
-    @JsonProperty("access_token")
     private String accessToken;
     private UserAuthenticationDto user;
 }

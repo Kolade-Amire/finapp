@@ -3,7 +3,7 @@ package com.finapp.backend.utils;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class PasswordValidator implements ConstraintValidator<Validations.StrongPassword, String> {
+public class PasswordValidator implements ConstraintValidator<StrongPassword, String> {
 
     private static final int MIN_PASSWORD_LENGTH = 8;
 

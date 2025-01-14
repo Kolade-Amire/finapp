@@ -41,6 +41,6 @@ build/
 # Environment files
 .env
 .env.production
-.env.test
+src/test/resources/.env
 .env.*
 !.env.example

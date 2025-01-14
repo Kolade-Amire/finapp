@@ -1,4 +1,7 @@
 spring:
+  mvc:
+    problemdetails:
+      enabled: true
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
     username: sa
@@ -24,8 +27,11 @@ jwt:
 
 
 logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   level:
     org:
       springframework: ERROR
-      springframework.security: DEBUG
-      autoconfigure: INFO
+      springframework.security: ERROR
+      springframework.boot.autoconfigure: ERROR
+      autoconfigure: ERROR

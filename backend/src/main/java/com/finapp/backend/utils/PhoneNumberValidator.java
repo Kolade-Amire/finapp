@@ -6,7 +6,7 @@ import com.google.i18n.phonenumbers.Phonenumber;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class PhoneNumberValidator implements ConstraintValidator<Validations.ValidPhoneNumber, String> {
+public class PhoneNumberValidator implements ConstraintValidator<ValidPhoneNumber, String> {
 
     private static final PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
 

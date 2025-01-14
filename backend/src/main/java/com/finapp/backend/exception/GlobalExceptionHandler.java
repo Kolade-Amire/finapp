@@ -8,19 +8,20 @@ import jakarta.validation.ConstraintViolationException;
 import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -107,21 +108,63 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ProblemDetail> handleValidationException(ConstraintViolationException exception, HttpServletRequest request) {
+    public ResponseEntity<Object> handleValidationException(ConstraintViolationException exception, HttpServletRequest request) {
         LOGGER.error(exception.getMessage());
 
+        //extract error messages from the exception
         List<String> errorMessages = exception.getConstraintViolations()
                 .stream()
                 .map(ConstraintViolation::getMessage)
                 .toList();
 
 
-        var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        problemDetail.setTitle("Validation Failed");
-        problemDetail.setInstance(URI.create(request.getRequestURI()));
-        problemDetail.setDetail("One or more validation errors occurred");
-        problemDetail.setProperties(Map.of("errors", errorMessages));
 
-        return new ResponseEntity<>(problemDetail, HttpStatus.BAD_REQUEST);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("title", "Constraint Validation Failed");
+        response.put("detail", "One or more validation errors occurred");
+        response.put("instance", request.getRequestURI());
+        response.put("properties", Map.of("errors", errorMessages));
+        response.put("status", HttpStatus.BAD_REQUEST.value());
+
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  @NonNull HttpHeaders headers,
+                                                                  @NonNull HttpStatusCode status,
+                                                                  @NonNull WebRequest request) {
+        LOGGER.error("Validation failed: {}", ex.getMessage());
+
+        List<String> errorMessages = ex.getBindingResult()
+                .getAllErrors()
+                .stream()
+                .map(error -> {
+                    if (error instanceof FieldError fieldError) {
+                        return fieldError.getField() + ": " + fieldError.getDefaultMessage();
+                    }
+                    return error.getDefaultMessage();
+                })
+                .toList();
+
+        String requestUri = ((ServletWebRequest) request).getRequest().getRequestURI();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("title", "Request Validation Failed");
+        response.put("detail", "One or more validation errors occurred.");
+        response.put("instance", requestUri);
+        response.put("properties", Map.of("errors", errorMessages));
+        response.put("status", status.value());
+
+        return ResponseEntity
+                .badRequest()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
+    }
+
+
+
 }
