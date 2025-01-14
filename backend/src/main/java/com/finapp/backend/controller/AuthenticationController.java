@@ -9,9 +9,11 @@ import com.finapp.backend.service.AuthenticationServiceImpl;
 import com.finapp.backend.utils.AppConstants;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,19 +24,20 @@ import java.io.IOException;
 @RequestMapping(AppConstants.BASE_URL + "/auth")
 @RestController
 @RequiredArgsConstructor
+@Validated
 public class AuthenticationController {
 
     private final AuthenticationServiceImpl authenticationServiceImpl;
     private final LogoutService logoutService;
 
     @PostMapping("/register")
-    public ResponseEntity<RegistrationResponse> register(@RequestBody RegistrationRequest request){
+    public ResponseEntity<RegistrationResponse> register(@Valid @RequestBody RegistrationRequest request){
         return ResponseEntity.ok(authenticationServiceImpl.register(request));
     }
 
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request){
+    public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request){
         return ResponseEntity.ok(authenticationServiceImpl.authenticate(request));
     }
 

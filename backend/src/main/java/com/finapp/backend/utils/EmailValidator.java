@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.regex.Pattern;
 
-public class EmailValidator implements ConstraintValidator<Validations.ValidEmail, String> {
+public class EmailValidator implements ConstraintValidator<ValidEmail, String> {
 
     private static  final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$");
     @Override

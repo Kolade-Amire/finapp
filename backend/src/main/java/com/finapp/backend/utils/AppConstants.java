@@ -24,8 +24,6 @@ public class AppConstants {
 
     public static final String[] PUBLIC_URLS = {
             AppConstants.BASE_URL + "/auth/**",
-            "/oauth2/**",
-            AppConstants.BASE_URL + "/oauth2/**",
             "/v2/api-docs",
             "/v3/api-docs",
             "/v3/api-docs.yaml",
