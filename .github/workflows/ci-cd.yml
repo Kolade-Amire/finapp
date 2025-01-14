@@ -28,17 +28,17 @@ jobs:
 
       - name: Create backend env file
         run: |
-            echo "DB_URL=${DB_URL}" >> .env
-            echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
-            echo "DB_USERNAME=${DB_USERNAME}" >> .env
-            echo "DB_NAME=${DB_NAME}" >> .env
-            echo "REDIS_HOST=${REDIS_HOST}" >> .env
-            echo "REDIS_PASSWORD=${REDIS_PASSWORD}" >> .env
-            echo "JWT_SECRET=${JWT_SECRET}" >> .env
-            echo "ACCESS_TOKEN_EXPIRATION=${ACCESS_TOKEN_EXPIRATION}" >> .env
-            echo "REFRESH_TOKEN_EXPIRATION=${REFRESH_TOKEN_EXPIRATION}" >> .env
-            echo "JWT_ISSUER=${JWT_ISSUER}" >> .env
-            echo "JWT_AUDIENCE=${JWT_AUDIENCE}" >> .env
+            echo "DB_URL=${DB_URL}" >> src/test/resources/.env
+            echo "DB_PASSWORD=${DB_PASSWORD}" >> src/test/resources/.env
+            echo "DB_USERNAME=${DB_USERNAME}" >> src/test/resources/.env
+            echo "DB_NAME=${DB_NAME}" >> src/test/resources/.env
+            echo "REDIS_HOST=${REDIS_HOST}" >> src/test/resources/.env
+            echo "REDIS_PASSWORD=${REDIS_PASSWORD}" >> src/test/resources/.env
+            echo "JWT_SECRET=${JWT_SECRET}" >> src/test/resources/.env
+            echo "ACCESS_TOKEN_EXPIRATION=${ACCESS_TOKEN_EXPIRATION}" >> src/test/resources/.env
+            echo "REFRESH_TOKEN_EXPIRATION=${REFRESH_TOKEN_EXPIRATION}" >> src/test/resources/.env
+            echo "JWT_ISSUER=${JWT_ISSUER}" >> src/test/resources/.env
+            echo "JWT_AUDIENCE=${JWT_AUDIENCE}" >> src/test/resources/.env
 
       - name: Set up JDK
         uses: actions/setup-java@v3
