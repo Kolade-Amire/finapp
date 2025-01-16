@@ -1,6 +1,7 @@
 package com.finapp.backend.controller;
 
 import com.finapp.backend.dto.auth.UserDto;
+import com.finapp.backend.dto.user.UserUpdateDto;
 import com.finapp.backend.interfaces.service.UserService;
 import com.finapp.backend.utils.AppConstants;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +25,19 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PatchMapping
-    public ResponseEntity<UserDto> updateUser(){
-
+    @PatchMapping("/{id}")
+    @PreAuthorize("T(java.util.UUID).fromString(#id) == authentication.principal.getId()")
+    public ResponseEntity<UserDto> updateUser(@PathVariable String id, @RequestBody UserUpdateDto userDetails){
+        UserDto updatedUser = userService.updateUser(id, userDetails);
+        return ResponseEntity.ok(updatedUser);
     }
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("T(java.util.UUID).fromString(#id) == authentication.principal.getId()")
+    public ResponseEntity<Void> deleteAccount(@PathVariable String id){
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
 
 
 }
