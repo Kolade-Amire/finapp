@@ -1,12 +1,19 @@
 package com.finapp.backend.service;
 
 import com.finapp.backend.domain.User;
+import com.finapp.backend.dto.auth.UserDto;
+import com.finapp.backend.dto.user.UserUpdateDto;
+import com.finapp.backend.exception.CustomFinAppException;
 import com.finapp.backend.exception.SaveEntityException;
 import com.finapp.backend.interfaces.repository.UserRepository;
 import com.finapp.backend.interfaces.service.UserService;
 import com.finapp.backend.utils.AppConstants;
+import com.finapp.backend.utils.mapper.UserAuthenticationDtoMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -16,32 +23,105 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    public static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
-    public User findByEmail(String email){
+    public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(
-                ()-> new EntityNotFoundException(AppConstants.USER_NOT_FOUND)
+                () -> new EntityNotFoundException(AppConstants.USER_NOT_FOUND)
         );
     }
 
     @Override
     public User findById(UUID id) {
         return userRepository.findById(id).orElseThrow(
-                ()-> new EntityNotFoundException(String.format("User with id %s not found.", id))
+                () -> new EntityNotFoundException(String.format("User with id %s not found.", id))
         );
     }
 
     @Override
-    public User saveUser(User user) {
+    public UserDto retrieveUser(String id) {
         try {
-            return userRepository.save(user);
+            UUID userId = UUID.fromString(id);
+            User user = findById(userId);
+            return UserAuthenticationDtoMapper.mapUserToUserAuthDto(user);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        } catch (Exception e){
+            LOGGER.error(e.getMessage());
+            throw new CustomFinAppException(e.getLocalizedMessage());
+        }
+    }
+
+    @Override
+    public UserDto saveUser(User user) {
+        try {
+            User savedUser = userRepository.save(user);
+
+            return UserDto.builder()
+                    .id(savedUser.getId().toString())
+                    .firstname(savedUser.getFirstname())
+                    .lastname(savedUser.getLastname())
+                    .email(savedUser.getEmail())
+                    .phoneNumber(savedUser.getPhoneNumber())
+                    .profilePicture(savedUser.getProfilePictureUrl())
+                    .role(savedUser.getRole())
+                    .createdAt(savedUser.getCreatedAt())
+                    .lastLoginAt(savedUser.getLastLoginAt())
+                    .build();
+
         } catch (Exception e) {
-            throw new SaveEntityException("An error occurred while trying to save user to the database", e);
+            LOGGER.error(e.getMessage());
+            throw new SaveEntityException("An error occurred while trying to save user details.");
         }
     }
 
     @Override
     public boolean userExists(String email) {
         return userRepository.findByEmail(email).isPresent();
+    }
+
+    @Override
+    public UserDto updateUser(String userId, UserUpdateDto newDetails) {
+
+        try {
+            UUID id = UUID.fromString(userId);
+            User existingUser = findById(id);
+
+
+            //allowed updates
+            if (newDetails.getFirstname() != null) {
+                existingUser.setFirstname(newDetails.getFirstname());
+            }
+            if (newDetails.getLastname() != null) {
+                existingUser.setFirstname(newDetails.getLastname());
+            }
+            if (newDetails.getPhoneNumber() != null) {
+                existingUser.setFirstname(newDetails.getPhoneNumber());
+            }
+            if (newDetails.getProfilePictureUrl() != null) {
+                existingUser.setFirstname(newDetails.getProfilePictureUrl());
+            }
+
+            return saveUser(existingUser);
+
+        } catch (DataIntegrityViolationException e) {
+            throw new CustomFinAppException("Phone number already used.");
+        } catch (Exception e){
+            LOGGER.error(e.getMessage());
+            throw new CustomFinAppException(e.getLocalizedMessage());
+        }
+    }
+
+    @Override
+    public void deleteUser(String userId) {
+        try {
+            UUID id = UUID.fromString(userId);
+            User user = findById(id);
+            userRepository.delete(user);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new CustomFinAppException(e.getLocalizedMessage());
+        }
     }
 }

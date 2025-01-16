@@ -1,25 +1,25 @@
 package com.finapp.backend.controller;
 
-import com.finapp.backend.dto.AuthenticationRequest;
-import com.finapp.backend.dto.AuthenticationResponse;
-import com.finapp.backend.dto.RegistrationRequest;
-import com.finapp.backend.dto.RegistrationResponse;
+import com.finapp.backend.dto.auth.AuthenticationRequest;
+import com.finapp.backend.dto.auth.AuthenticationResponse;
+import com.finapp.backend.dto.auth.RegistrationRequest;
+import com.finapp.backend.dto.auth.RegistrationResponse;
+import com.finapp.backend.interfaces.service.AuthenticationService;
 import com.finapp.backend.security.service.LogoutService;
-import com.finapp.backend.service.AuthenticationServiceImpl;
 import com.finapp.backend.utils.AppConstants;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.net.URI;
 
 @RequestMapping(AppConstants.BASE_URL + "/auth")
 @RestController
@@ -27,26 +27,32 @@ import java.io.IOException;
 @Validated
 public class AuthenticationController {
 
-    private final AuthenticationServiceImpl authenticationServiceImpl;
+    private final AuthenticationService authenticationService;
     private final LogoutService logoutService;
 
-    @PostMapping("/register")
+    @PostMapping("/signup")
     public ResponseEntity<RegistrationResponse> register(@Valid @RequestBody RegistrationRequest request){
-        return ResponseEntity.ok(authenticationServiceImpl.register(request));
+        RegistrationResponse response = authenticationService.register(request);
+        URI newProfileLocation = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path(AppConstants.BASE_URL + "/user/{id}")
+                .buildAndExpand(response.getUser().getId())
+                .toUri();
+        return ResponseEntity.created(newProfileLocation).body(authenticationService.register(request));
     }
 
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request){
-        return ResponseEntity.ok(authenticationServiceImpl.authenticate(request));
+        return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
-    @PostMapping("/refresh")
-    public void refreshToken(
+    @PostMapping("/token-refresh/{id}")
+    @PreAuthorize("T(java.util.UUID).fromString(#id) == authentication.principal.getId()")
+    public void refreshToken(@PathVariable String id,
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException {
-            authenticationServiceImpl.refreshAccessToken(request, response);
+            authenticationService.refreshAccessToken(request, response);
     }
 
     @PostMapping("/logout")

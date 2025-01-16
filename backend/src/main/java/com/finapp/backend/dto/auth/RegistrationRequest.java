@@ -1,4 +1,4 @@
-package com.finapp.backend.dto;
+package com.finapp.backend.dto.auth;
 
 import com.finapp.backend.utils.StrongPassword;
 import com.finapp.backend.utils.ValidEmail;

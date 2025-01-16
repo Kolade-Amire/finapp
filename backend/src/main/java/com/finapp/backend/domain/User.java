@@ -1,5 +1,6 @@
 package com.finapp.backend.domain;
 
+import com.finapp.backend.security.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

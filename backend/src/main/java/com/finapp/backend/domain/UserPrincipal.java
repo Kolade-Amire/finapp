@@ -13,7 +13,7 @@ public class UserPrincipal implements UserDetails {
 
     private final User user;
 
-    public UUID getUserId(){
+    public UUID getId(){
         return user.getId();
     }
 

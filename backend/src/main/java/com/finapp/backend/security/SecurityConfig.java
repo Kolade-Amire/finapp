@@ -26,7 +26,7 @@ import org.springframework.web.filter.CorsFilter;
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity()
 public class SecurityConfig {
 
     private final AccessDeniedHandler accessDeniedHandler;

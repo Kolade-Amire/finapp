@@ -1,10 +1,13 @@
 package com.finapp.backend.security.service;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.finapp.backend.exception.CustomFinAppException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.io.DecodingException;
+import io.jsonwebtoken.security.InvalidKeyException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import io.jsonwebtoken.security.WeakKeyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,24 +41,46 @@ public class JwtService {
     private String JWT_AUDIENCE;
 
     private Claims extractAllClaims(String token) {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(getSignKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts
+                    .parserBuilder()
+                    .setSigningKey(getSignKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            throw new CustomFinAppException("Jwt is expired.");
+        } catch (UnsupportedJwtException e) {
+            throw new CustomFinAppException("Unsupported Jwt format.");
+        } catch (MalformedJwtException e) {
+            throw new CustomFinAppException("Jwt was not correctly constructed and it is being rejected.");
+        } catch (SignatureException e) {
+            throw new CustomFinAppException("Unrecognized Jwt signature.");
+        } catch (IllegalArgumentException e) {
+            throw new CustomFinAppException("An illegal argument was passed so claims can't be extracted from Jwt as expected.");
+        }
     }
 
     private Key getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(JWT_SECRET);
-        return Keys.hmacShaKeyFor(keyBytes);
+        try {
+            byte[] keyBytes = Decoders.BASE64.decode(JWT_SECRET);
+            return Keys.hmacShaKeyFor(keyBytes);
+        } catch (DecodingException e) {
+            throw new CustomFinAppException("Error decoding secret. Couldn't get Jwt sign key.");
+        } catch (WeakKeyException e) {
+            throw new CustomFinAppException("A weak key exception occurred while trying to get sign key for jwt.");
+        }
     }
 
 
     //Extract any specific type of claim from token
     public <T> T extractAnyClaim(String token, Function<Claims, T> claimsResolver){
         final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+        try {
+            return claimsResolver.apply(claims);
+        } catch (Exception e) {
+            throw new CustomFinAppException("Error applying claims resolver(Function) to get claim(s) from Jwt.");
+        }
     }
 
     //calls the method to extract specific claim(username)
@@ -68,16 +93,22 @@ public class JwtService {
     }
 
     private String buildToken(Map<String, Object> claims, UserDetails userDetails, long expiration) {
-        return Jwts
-                .builder()
-                .setClaims(claims)
-                .setSubject(userDetails.getUsername())
-                .setIssuer(JWT_ISSUER)
-                .setAudience(JWT_AUDIENCE)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSignKey(), SignatureAlgorithm.HS256)
-                .compact();
+        try {
+            return Jwts
+                    .builder()
+                    .setClaims(claims)
+                    .setSubject(userDetails.getUsername())
+                    .setIssuer(JWT_ISSUER)
+                    .setAudience(JWT_AUDIENCE)
+                    .setIssuedAt(new Date())
+                    .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                    .signWith(getSignKey(), SignatureAlgorithm.HS256)
+                    .compact();
+        } catch (InvalidKeyException e) {
+            throw new CustomFinAppException("Invalid JWT sign key.");
+        } catch (Exception e){
+            throw new CustomFinAppException("An unexpected error occurred while building jwt.");
+        }
     }
 
     private boolean isTokenExpired(String token) {
@@ -86,7 +117,7 @@ public class JwtService {
             return extractExpiration(token)
                     .before(new Date());
         } catch (Exception e){
-            LOGGER.error("Token has expired. Login again.");
+            LOGGER.error("Token has expired. User needs to authenticate again.");
             return true;
         }
 
@@ -112,11 +143,16 @@ public class JwtService {
     }
 
     public Map<String, Object> createUserClaims(UserDetails userDetails){
-        var claims = new HashMap<String, Object>();
-        var authorities = userDetails.getAuthorities().stream().toList();
-        claims.put("authorities", authorities);
-        claims.put("username", userDetails.getUsername());
-        return claims;
+        try {
+            var claims = new HashMap<String, Object>();
+            var authorities = userDetails.getAuthorities().stream().toList();
+            claims.put("authorities", authorities);
+            claims.put("username", userDetails.getUsername());
+            return claims;
+        } catch (Exception e) {
+            LOGGER.error("An unexpected error occurred: ", e);
+            throw new CustomFinAppException("An unexpected error occurred while trying to create jwt claims from user principal.");
+        }
     }
 
 

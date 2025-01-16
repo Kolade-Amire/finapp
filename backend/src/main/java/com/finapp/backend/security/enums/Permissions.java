@@ -1,4 +1,4 @@
-package com.finapp.backend.enums;
+package com.finapp.backend.security.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

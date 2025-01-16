@@ -1,14 +1,11 @@
 package com.finapp.backend.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.finapp.backend.dto.AuthenticationRequest;
-import com.finapp.backend.dto.AuthenticationResponse;
-import com.finapp.backend.dto.RegistrationRequest;
-import com.finapp.backend.dto.RegistrationResponse;
-import com.finapp.backend.domain.Role;
 import com.finapp.backend.domain.Token;
 import com.finapp.backend.domain.User;
 import com.finapp.backend.domain.UserPrincipal;
+import com.finapp.backend.dto.HttpResponse;
+import com.finapp.backend.dto.auth.*;
 import com.finapp.backend.exception.CustomFinAppException;
 import com.finapp.backend.exception.EntityAlreadyExistException;
 import com.finapp.backend.exception.PasswordsDoNotMatchException;
@@ -16,10 +13,10 @@ import com.finapp.backend.exception.SaveEntityException;
 import com.finapp.backend.interfaces.service.AuthenticationService;
 import com.finapp.backend.interfaces.service.TokenService;
 import com.finapp.backend.interfaces.service.UserService;
-import com.finapp.backend.utils.mapper.UserAuthenticationDtoMapper;
+import com.finapp.backend.security.enums.Role;
 import com.finapp.backend.security.service.JwtService;
 import com.finapp.backend.utils.AppConstants;
-import com.finapp.backend.dto.HttpResponse;
+import com.finapp.backend.utils.mapper.UserAuthenticationDtoMapper;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,15 +26,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
 
@@ -53,7 +46,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
 
-    private String doPasswordsMatch (String p1, String p2){
+    private String doPasswordsMatch(String p1, String p2) {
         if (!p1.equals(p2)) {
             throw new PasswordsDoNotMatchException(AppConstants.PASSWORDS_MISMATCH);
         } else return p2;
@@ -69,47 +62,37 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public RegistrationResponse register(RegistrationRequest request) {
-        try {
-            validateNewUser(request.getEmail());
-            var password = doPasswordsMatch(request.getPassword(), request.getConfirmPassword());
 
-            var user = User.builder()
-                    .firstname(request.getFirstname())
-                    .lastname(request.getLastname())
-                    .email(request.getEmail())
-                    .password(passwordEncoder.encode(password))
-                    .role(Role.USER)
-                    .phoneNumber(request.getPhoneNumber())
-                    .createdAt(LocalDateTime.now())
-                    .isAccountExpired(false)
-                    .isEmailVerified(true)
-                    .passwordLastChangedDate(LocalDateTime.now())
-                    .build();
+        validateNewUser(request.getEmail());
+        var password = doPasswordsMatch(request.getPassword(), request.getConfirmPassword());
 
-            var savedUser = userService.saveUser(user);
-            var userDto = UserAuthenticationDtoMapper.mapUserToUserAuthDto(savedUser);
+        var user = User.builder()
+                .firstname(request.getFirstname())
+                .lastname(request.getLastname())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(password))
+                .role(Role.USER)
+                .phoneNumber(request.getPhoneNumber())
+                .createdAt(LocalDateTime.now())
+                .isAccountExpired(false)
+                .isEmailVerified(true)
+                .passwordLastChangedDate(LocalDateTime.now())
+                .build();
 
+        var savedUser = userService.saveUser(user);
 
-            var httpResponse = HttpResponse.builder()
-                    .httpStatus(HttpStatus.CREATED)
-                    .httpStatusCode(HttpStatus.CREATED.value())
-                    .reason(HttpStatus.CREATED.getReasonPhrase())
-                    .message(AppConstants.REGISTRATION_SUCCESS)
-                    .timestamp(LocalDateTime.now())
-                    .build();
+        var httpResponse = HttpResponse.builder()
+                .httpStatus(HttpStatus.CREATED)
+                .httpStatusCode(HttpStatus.CREATED.value())
+                .reason(HttpStatus.CREATED.getReasonPhrase())
+                .message(AppConstants.REGISTRATION_SUCCESS)
+                .timestamp(LocalDateTime.now())
+                .build();
 
-            return RegistrationResponse.builder()
-                    .httpResponse(httpResponse)
-                    .user(userDto)
-                    .build();
-
-        } catch (EntityAlreadyExistException e) {
-            throw new EntityAlreadyExistException(e.getMessage());
-        } catch (PasswordsDoNotMatchException e){
-            throw new PasswordsDoNotMatchException(e.getMessage());
-        } catch(Exception e){
-            throw new SaveEntityException("Error registering new user.", e);
-        }
+        return RegistrationResponse.builder()
+                .httpResponse(httpResponse)
+                .user(savedUser)
+                .build();
 
     }
 
@@ -123,49 +106,53 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                             request.getPassword()
                     )
             );
-
-            var user = userService.findByEmail(request.getEmail());
-
-            user.setLastLoginAt(LocalDateTime.now());
-
-
-            try {
-                tokenService.deleteTokenByUserId(user.getId().toString());
-            } catch (Exception e) {
-                LOGGER.info("Token expired, so it's been removed. Failed to delete user's existing token.");
-            }
-
-
-            var userPrincipal = new UserPrincipal(user);
-
-            var accessToken = jwtService.generateAccessToken(userPrincipal);
-            var refreshToken = jwtService.generateRefreshToken(userPrincipal);
-
-            saveUserRefreshToken(user, refreshToken);
-
-            var response = HttpResponse.builder()
-                    .httpStatusCode(HttpStatus.OK.value())
-                    .httpStatus(HttpStatus.OK)
-                    .reason(HttpStatus.OK.getReasonPhrase())
-                    .message(AppConstants.AUTHENTICATION_SUCCESS)
-                    .timestamp(LocalDateTime.now())
-                    .build();
-
-            var userDto = UserAuthenticationDtoMapper.mapUserToUserAuthDto(user);
-
-            return AuthenticationResponse.builder()
-                    .accessToken(accessToken)
-                    .httpResponse(response)
-                    .user(userDto)
-                    .build();
-
-        } catch (BadCredentialsException e){
-            throw new BadCredentialsException("Invalid Email or Password.");
         } catch (AuthenticationException e) {
-            throw new AuthenticationServiceException("Error Authenticating user.", e);
-        } catch (Exception e){
-            throw new AuthenticationServiceException("User Authentication failed.", e);
+            LOGGER.error("Error from authenticationManager.authenticate()", e);
+            throw new CustomFinAppException("An error occurred while trying to authenticate user. Please try again later.");
         }
+
+        var user = userService.findByEmail(request.getEmail());
+
+        user.setLastLoginAt(LocalDateTime.now());
+
+
+        try {
+            tokenService.deleteTokenByUserId(user.getId().toString());
+        } catch (Exception e) {
+            LOGGER.info("Failed to delete user's existing refresh token. Token might have expired which means it's been removed. \n More specific cause:{}", e.getMessage());
+        }
+
+
+        var userPrincipal = new UserPrincipal(user);
+
+        String accessToken;
+        String refreshToken;
+
+        try {
+            accessToken = jwtService.generateAccessToken(userPrincipal);
+            refreshToken = jwtService.generateRefreshToken(userPrincipal);
+        } catch (Exception e) {
+            LOGGER.error("Error occurred while trying to generate refresh/access token(s)", e);
+            throw new CustomFinAppException("An error occurred while authenticating user.");
+        }
+
+        saveUserRefreshToken(user, refreshToken);
+
+        var response = HttpResponse.builder()
+                .httpStatusCode(HttpStatus.OK.value())
+                .httpStatus(HttpStatus.OK)
+                .reason(HttpStatus.OK.getReasonPhrase())
+                .message(AppConstants.AUTHENTICATION_SUCCESS)
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        UserDto userDto = UserAuthenticationDtoMapper.mapUserToUserAuthDto(user);
+
+        return AuthenticationResponse.builder()
+                .accessToken(accessToken)
+                .httpResponse(response)
+                .user(userDto)
+                .build();
 
     }
 
@@ -180,12 +167,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         try {
             tokenService.saveToken(newTokenEntity);
         } catch (Exception e) {
-            throw new SaveEntityException(String.format("Error occurred while saving user token to redis. User Id: %s", user.getId().toString()), e);
+            throw new SaveEntityException(String.format("Error occurred while saving user token. User Id: %s", user.getId().toString()), e);
         }
     }
 
     @Override
-    public void refreshAccessToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
 
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String accessToken;
@@ -225,14 +212,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     outputStream.flush();
                 }
 
-
             }
         } catch (JwtException e) {
-            throw new CustomFinAppException("A Jwt Error occurred.", e);
-        } catch (UsernameNotFoundException e) {
-            throw new CustomFinAppException("User not found.", e);
-        } catch (Exception e) {
-            throw new CustomFinAppException("Error refreshing access token.", e);
+            LOGGER.error("A Jwt Error occurred.", e);
+            throw new CustomFinAppException("Error refreshing token.");
+        }catch (Exception e) {
+            LOGGER.error("An unexpected error occurred", e);
+            throw new CustomFinAppException("Error refreshing token.");
         }
 
     }
