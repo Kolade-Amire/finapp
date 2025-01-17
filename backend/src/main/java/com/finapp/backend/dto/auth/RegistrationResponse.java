@@ -1,5 +1,6 @@
-package com.finapp.backend.dto;
+package com.finapp.backend.dto.auth;
 
+import com.finapp.backend.dto.HttpResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,5 +17,5 @@ import lombok.ToString;
 public class RegistrationResponse {
     private HttpResponse httpResponse;
     private String accessToken;
-    private UserAuthenticationDto user;
+    private UserDto user;
 }

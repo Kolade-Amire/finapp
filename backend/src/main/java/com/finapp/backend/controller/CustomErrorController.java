@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @RestController
 public class CustomErrorController implements ErrorController {
@@ -22,7 +23,7 @@ public class CustomErrorController implements ErrorController {
                 .httpStatus(status)
                 .reason(status.getReasonPhrase())
                 .message("An error occurred.")
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now(ZoneOffset.UTC))
                 .build();
         return new ResponseEntity<>(httpResponse, status);
     }

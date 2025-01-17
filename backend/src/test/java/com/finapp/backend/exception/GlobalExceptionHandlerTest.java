@@ -1,7 +1,7 @@
 package com.finapp.backend.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.finapp.backend.dto.RegistrationRequest;
+import com.finapp.backend.dto.auth.RegistrationRequest;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ public class GlobalExceptionHandlerTest {
                 .build();
 
 
-        mockMvc.perform(post("/api/v1/auth/register")
+        mockMvc.perform(post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())

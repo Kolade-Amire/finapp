@@ -1,9 +1,9 @@
 package com.finapp.backend.interfaces.service;
 
-import com.finapp.backend.dto.AuthenticationRequest;
-import com.finapp.backend.dto.AuthenticationResponse;
-import com.finapp.backend.dto.RegistrationRequest;
-import com.finapp.backend.dto.RegistrationResponse;
+import com.finapp.backend.dto.auth.AuthenticationRequest;
+import com.finapp.backend.dto.auth.AuthenticationResponse;
+import com.finapp.backend.dto.auth.RegistrationRequest;
+import com.finapp.backend.dto.auth.RegistrationResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 

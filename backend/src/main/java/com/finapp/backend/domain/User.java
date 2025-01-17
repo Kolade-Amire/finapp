@@ -1,5 +1,6 @@
 package com.finapp.backend.domain;
 
+import com.finapp.backend.security.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.hibernate.proxy.HibernateProxy;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -62,15 +64,18 @@ public class User {
     @Column(nullable = false)
     private boolean isEmailVerified;
 
+    private LocalDateTime deletionDate;
+
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
+        createdAt = LocalDateTime.now(ZoneOffset.UTC);
+        updatedAt = createdAt;
+        passwordLastChangedDate = createdAt;
     }
 
     @PreUpdate
     protected void onUpdate(){
-        updatedAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now(ZoneOffset.UTC);
     }
 
 

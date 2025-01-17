@@ -5,15 +5,18 @@ public class AppConstants {
     //Security
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String JWT_TOKEN_HEADER = "Jwt-Token";
-    public static final String AUTHORITIES = "authorities";
+    public static final String REGISTRATION_SUCCESS = "User registered successfully!";
+    public static final String AUTHENTICATION_SUCCESS = "User authenticated successfully!";
+    public static final String REFRESH_SUCCESS = "Access token refreshed successfully!";
+
+
+    //Error Strings
     public static final String USER_NOT_FOUND = "User does not exist.";
     public static final String INCORRECT_CREDENTIALS = "Invalid Email/Password, please try again.";
     public static final String ACCESS_DENIED = "You do not have permission to access this page";
     public static final String FORBIDDEN_MESSAGE = "You need to log in to access this page";
     public static final String PASSWORDS_MISMATCH = "Passwords do not match!";
-    public static final String REGISTRATION_SUCCESS = "User registered successfully!";
-    public static final String AUTHENTICATION_SUCCESS = "User authenticated successfully!";
-    public static final String REFRESH_SUCCESS = "Access token refreshed successfully!";
+    public static final String APPLICATION_ERROR = "An unexpected error occurred in the application.";
 
 
     //Rest API
