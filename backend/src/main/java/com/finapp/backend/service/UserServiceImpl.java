@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public Page<UserDto> getUsersScheduledForDeletion(Pageable pageable) {
-        Page<User> scheduledUsers = userRepository.findByDeletionDateBefore(LocalDateTime.now(ZoneOffset.UTC), pageable);
+        Page<User> scheduledUsers = userRepository.findByDeletionDateBeforeOrderByFirstname(LocalDateTime.now(ZoneOffset.UTC), pageable);
         return UserDtoMapper.mapToPageOfDto(scheduledUsers);
     }
 

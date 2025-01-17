@@ -8,19 +8,26 @@ import io.jsonwebtoken.security.InvalidKeyException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import io.jsonwebtoken.security.WeakKeyException;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtService.class);
@@ -41,6 +48,8 @@ public class JwtService {
     private String JWT_AUDIENCE;
 
     private Claims extractAllClaims(String token) {
+
+
         try {
             return Jwts
                     .parserBuilder()
@@ -74,7 +83,7 @@ public class JwtService {
 
 
     //Extract any specific type of claim from token
-    public <T> T extractAnyClaim(String token, Function<Claims, T> claimsResolver){
+    public <T> T extractAnyClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         try {
             return claimsResolver.apply(claims);
@@ -87,6 +96,7 @@ public class JwtService {
     public String extractUsername(String token) {
         return extractAnyClaim(token, Claims::getSubject);
     }
+
     //extract expiration
     private Date extractExpiration(String token) {
         return extractAnyClaim(token, Claims::getExpiration);
@@ -101,29 +111,33 @@ public class JwtService {
                     .setIssuer(JWT_ISSUER)
                     .setAudience(JWT_AUDIENCE)
                     .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                    .setExpiration(new Date(getTimeNowInMilliSeconds() + expiration))
                     .signWith(getSignKey(), SignatureAlgorithm.HS256)
                     .compact();
         } catch (InvalidKeyException e) {
             throw new CustomFinAppException("Invalid JWT sign key.");
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new CustomFinAppException("An unexpected error occurred while building jwt.");
         }
+    }
+
+    private long getTimeNowInMilliSeconds() {
+        return Instant.now(Clock.systemUTC()).toEpochMilli();
     }
 
     private boolean isTokenExpired(String token) {
 
         try {
             return extractExpiration(token)
-                    .before(new Date());
-        } catch (Exception e){
+                    .before(new Date(getTimeNowInMilliSeconds()));
+        } catch (Exception e) {
             LOGGER.error("Token has expired. User needs to authenticate again.");
             return true;
         }
 
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails){
+    public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
@@ -142,10 +156,14 @@ public class JwtService {
         return buildToken(claims, userDetails, REFRESH_TOKEN_EXPIRATION);
     }
 
-    public Map<String, Object> createUserClaims(UserDetails userDetails){
+    public Map<String, Object> createUserClaims(UserDetails userDetails) {
         try {
             var claims = new HashMap<String, Object>();
-            var authorities = userDetails.getAuthorities().stream().toList();
+            List<String> authorities = userDetails.getAuthorities()
+                    .stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toList());
+
             claims.put("authorities", authorities);
             claims.put("username", userDetails.getUsername());
             return claims;

@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.OutputStream;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Service
 @RequiredArgsConstructor
@@ -73,20 +74,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .password(passwordEncoder.encode(password))
                 .role(Role.USER)
                 .phoneNumber(request.getPhoneNumber())
-                .createdAt(LocalDateTime.now())
                 .isAccountExpired(false)
                 .isEmailVerified(true)
-                .passwordLastChangedDate(LocalDateTime.now())
                 .build();
 
-        var savedUser = userService.saveUser(user);
+        UserDto savedUser = userService.saveUser(user);
 
         var httpResponse = HttpResponse.builder()
                 .httpStatus(HttpStatus.CREATED)
                 .httpStatusCode(HttpStatus.CREATED.value())
                 .reason(HttpStatus.CREATED.getReasonPhrase())
                 .message(AppConstants.REGISTRATION_SUCCESS)
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now(ZoneOffset.UTC))
                 .build();
 
         return RegistrationResponse.builder()
@@ -113,7 +112,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         var user = userService.findByEmail(request.getEmail());
 
-        user.setLastLoginAt(LocalDateTime.now());
+        user.setLastLoginAt(LocalDateTime.now(ZoneOffset.UTC));
 
 
         try {
@@ -143,7 +142,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .httpStatus(HttpStatus.OK)
                 .reason(HttpStatus.OK.getReasonPhrase())
                 .message(AppConstants.AUTHENTICATION_SUCCESS)
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now(ZoneOffset.UTC))
                 .build();
 
         UserDto userDto = UserDtoMapper.mapUserToDto(user);
@@ -198,6 +197,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                             .httpStatusCode(HttpStatus.OK.value())
                             .httpStatus(HttpStatus.OK)
                             .reason(HttpStatus.OK.getReasonPhrase())
+                            .timestamp(LocalDateTime.now(ZoneOffset.UTC))
                             .message(AppConstants.REFRESH_SUCCESS)
                             .build();
 

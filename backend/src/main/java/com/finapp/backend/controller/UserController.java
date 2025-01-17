@@ -5,6 +5,8 @@ import com.finapp.backend.dto.user.UserUpdateDto;
 import com.finapp.backend.interfaces.service.UserService;
 import com.finapp.backend.utils.AppConstants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -39,5 +41,11 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/scheduled-for-deactivation")
+    @PreAuthorize("hasAuthority('admin:read')")
+    public ResponseEntity<Page<UserDto>> getUsersScheduledForDeletion(@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "20") int pageSize) {
+        Page<UserDto> users = userService.getUsersScheduledForDeletion(PageRequest.of(pageNumber, pageSize));
+        return ResponseEntity.ok(users);
+    }
 
 }

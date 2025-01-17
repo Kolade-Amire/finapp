@@ -18,7 +18,7 @@ public interface UserRepository extends ListCrudRepository<User, UUID> {
 
     Optional<User> findByEmail(String email);
 
-    Page<User> findByDeletionDateBefore(LocalDateTime time,Pageable pageable);
+    Page<User> findByDeletionDateBeforeOrderByFirstname(LocalDateTime time,Pageable pageable);
 
     void deleteByDeletionDateBefore(LocalDateTime time);
 }

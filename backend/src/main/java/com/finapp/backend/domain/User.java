@@ -69,7 +69,8 @@ public class User {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now(ZoneOffset.UTC);
-        updatedAt = LocalDateTime.now(ZoneOffset.UTC);
+        updatedAt = createdAt;
+        passwordLastChangedDate = createdAt;
     }
 
     @PreUpdate
