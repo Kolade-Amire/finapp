@@ -8,14 +8,19 @@ import com.finapp.backend.exception.SaveEntityException;
 import com.finapp.backend.interfaces.repository.UserRepository;
 import com.finapp.backend.interfaces.service.UserService;
 import com.finapp.backend.utils.AppConstants;
-import com.finapp.backend.utils.mapper.UserAuthenticationDtoMapper;
+import com.finapp.backend.utils.mapper.UserDtoMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 @Service
@@ -26,6 +31,7 @@ public class UserServiceImpl implements UserService {
     public static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
+    @Transactional(readOnly = true)
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(
                 () -> new EntityNotFoundException(AppConstants.USER_NOT_FOUND)
@@ -33,6 +39,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User findById(UUID id) {
         return userRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(String.format("User with id %s not found.", id))
@@ -40,11 +47,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDto retrieveUser(String id) {
         try {
             UUID userId = UUID.fromString(id);
             User user = findById(userId);
-            return UserAuthenticationDtoMapper.mapUserToUserAuthDto(user);
+            return UserDtoMapper.mapUserToDto(user);
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());
         } catch (Exception e){
@@ -54,6 +62,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto saveUser(User user) {
         try {
             User savedUser = userRepository.save(user);
@@ -82,6 +91,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto updateUser(String userId, UserUpdateDto newDetails) {
 
         try {
@@ -114,14 +124,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(String userId) {
-        try {
-            UUID id = UUID.fromString(userId);
-            User user = findById(id);
-            userRepository.delete(user);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            throw new CustomFinAppException(e.getLocalizedMessage());
-        }
+    @Transactional
+    public void scheduleAccountDeletion(String id) {
+        UUID userId = UUID.fromString(id);
+        User user = findById(userId);
+        user.setDeletionDate(LocalDateTime.now(ZoneOffset.UTC).plusDays(30));
+        saveUser(user);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserDto> getUsersScheduledForDeletion(Pageable pageable) {
+        Page<User> scheduledUsers = userRepository.findByDeletionDateBefore(LocalDateTime.now(ZoneOffset.UTC), pageable);
+        return UserDtoMapper.mapToPageOfDto(scheduledUsers);
+    }
+
+    @Override
+    @Transactional
+    public void deleteUsersDueForDeletion() {
+        userRepository.deleteByDeletionDateBefore(LocalDateTime.now(ZoneOffset.UTC));
+    }
+
+
 }

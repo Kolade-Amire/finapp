@@ -5,7 +5,6 @@ public class AppConstants {
     //Security
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String JWT_TOKEN_HEADER = "Jwt-Token";
-    public static final String AUTHORITIES = "authorities";
     public static final String REGISTRATION_SUCCESS = "User registered successfully!";
     public static final String AUTHENTICATION_SUCCESS = "User authenticated successfully!";
     public static final String REFRESH_SUCCESS = "Access token refreshed successfully!";

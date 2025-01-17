@@ -2,10 +2,12 @@ package com.finapp.backend.utils.mapper;
 
 import com.finapp.backend.dto.auth.UserDto;
 import com.finapp.backend.domain.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
-public class UserAuthenticationDtoMapper {
+public class UserDtoMapper {
 
-    public static UserDto mapUserToUserAuthDto(User user) {
+    public static UserDto mapUserToDto(User user) {
         return UserDto.builder()
                 .id(user.getId().toString())
                 .firstname(user.getFirstname())
@@ -18,4 +20,13 @@ public class UserAuthenticationDtoMapper {
                 .lastLoginAt(user.getLastLoginAt())
                 .build();
     }
+
+    public static Page<UserDto> mapToPageOfDto(Page<User> users){
+        var usersList = users.getContent().stream()
+                .map(UserDtoMapper::mapUserToDto)
+                .toList();
+        return new PageImpl<>(usersList, users.getPageable(), users.getTotalElements());
+    }
+
+
 }

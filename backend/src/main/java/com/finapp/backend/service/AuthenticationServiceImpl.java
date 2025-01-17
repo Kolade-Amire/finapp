@@ -16,7 +16,7 @@ import com.finapp.backend.interfaces.service.UserService;
 import com.finapp.backend.security.enums.Role;
 import com.finapp.backend.security.service.JwtService;
 import com.finapp.backend.utils.AppConstants;
-import com.finapp.backend.utils.mapper.UserAuthenticationDtoMapper;
+import com.finapp.backend.utils.mapper.UserDtoMapper;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -146,7 +146,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .timestamp(LocalDateTime.now())
                 .build();
 
-        UserDto userDto = UserAuthenticationDtoMapper.mapUserToUserAuthDto(user);
+        UserDto userDto = UserDtoMapper.mapUserToDto(user);
 
         return AuthenticationResponse.builder()
                 .accessToken(accessToken)

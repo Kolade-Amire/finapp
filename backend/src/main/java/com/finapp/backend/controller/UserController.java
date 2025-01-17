@@ -35,7 +35,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     @PreAuthorize("T(java.util.UUID).fromString(#id) == authentication.principal.getId()")
     public ResponseEntity<Void> deleteAccount(@PathVariable String id){
-        userService.deleteUser(id);
+        userService.scheduleAccountDeletion(id);
         return ResponseEntity.noContent().build();
     }
 
