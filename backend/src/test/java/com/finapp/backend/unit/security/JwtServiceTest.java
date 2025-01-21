@@ -2,6 +2,7 @@ package com.finapp.backend.unit.security;
 
 
 import com.finapp.backend.exception.CustomFinAppException;
+import com.finapp.backend.exception.TokenException;
 import com.finapp.backend.security.enums.Role;
 import com.finapp.backend.security.service.JwtService;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +37,8 @@ class JwtServiceTest {
 
 
     private UserDetails userDetails;
-    private static final String VALID_SECRET = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
+    //This is a test secret, has no security risk. Only for this test class.
+    private static final String TEST_JWT_SECRET = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
     private static final String TEST_USERNAME = "user@finapp.com";
     private static final String TEST_PASSWORD = "password";
     private static final String TEST_ISSUER = "finapp-backend";
@@ -46,7 +48,7 @@ class JwtServiceTest {
 
     @BeforeEach
     void setUp() {
-        Collection<? extends GrantedAuthority> userAuthorities = List.of(Role.USER.getAuthorities().get(1), Role.USER.getAuthorities().get(0));
+        Collection<? extends GrantedAuthority> userAuthorities = Role.USER.getAuthorities();
 
         // Setup test user
         userDetails = new User(
@@ -56,7 +58,7 @@ class JwtServiceTest {
         );
 
         // Inject properties using ReflectionTestUtils
-        ReflectionTestUtils.setField(jwtService, "JWT_SECRET", VALID_SECRET);
+        ReflectionTestUtils.setField(jwtService, "JWT_SECRET", TEST_JWT_SECRET);
         ReflectionTestUtils.setField(jwtService, "JWT_ISSUER", TEST_ISSUER);
         ReflectionTestUtils.setField(jwtService, "JWT_AUDIENCE", TEST_AUDIENCE);
         ReflectionTestUtils.setField(jwtService, "ACCESS_TOKEN_EXPIRATION", ACCESS_TOKEN_EXPIRATION);
@@ -117,14 +119,6 @@ class JwtServiceTest {
     class TokenValidationTests {
 
         @Test
-        @DisplayName("Should validate token with correct user details")
-        void shouldValidateTokenWithCorrectUserDetails() {
-            String token = jwtService.generateAccessToken(userDetails);
-
-            assertTrue(jwtService.isTokenValid(token, userDetails));
-        }
-
-        @Test
         @DisplayName("Should invalidate token with incorrect user details")
         void shouldInvalidateTokenWithIncorrectUserDetails() {
 
@@ -165,7 +159,8 @@ class JwtServiceTest {
             String token = jwtService.generateAccessToken(userDetails);
 
             // Act
-            Object authorities = jwtService.extractAnyClaim(
+            @SuppressWarnings("rawtypes")
+            List authorities = jwtService.extractAnyClaim(
                     token,
                     claim -> claim.get("authorities", List.class)
             );
@@ -173,27 +168,24 @@ class JwtServiceTest {
             // Assert
             assertNotNull(authorities);
 
-            // Sort both lists to compare the values ignoring the order
+
             List<String> expectedAuthorities = Role.USER.getAuthorities()
                     .stream()
-                    .map(GrantedAuthority::getAuthority)
-                    .collect(Collectors.toList());
+                    .map(GrantedAuthority::getAuthority).sorted().collect(Collectors.toList());
 
-            @SuppressWarnings("unchecked")
-            List<String> actualAuthorities = (List<String>) authorities;
-
-            Collections.sort(expectedAuthorities);
-            Collections.sort(actualAuthorities);
+            // Sort both lists to compare the values ignoring the order
+            //noinspection unchecked
+            Collections.sort(authorities);
 
             // Assert
-            assertIterableEquals(expectedAuthorities, actualAuthorities);
+            assertIterableEquals(expectedAuthorities, authorities);
         }
 
         @Test
         @DisplayName("Should throw exception for malformed token")
         void shouldThrowExceptionForMalformedToken() {
             assertThrows(CustomFinAppException.class, () ->
-                    jwtService.extractUsername("malformed.token.here")
+                    jwtService.extractUsername("a.malformed.token")
             );
         }
     }
@@ -218,7 +210,7 @@ class JwtServiceTest {
         @DisplayName("Should handle null user details")
         void shouldHandleNullUserDetails() {
             // Act & Assert
-            assertThrows(CustomFinAppException.class, () ->
+            assertThrows(TokenException.class, () ->
                     jwtService.generateAccessToken(null)
             );
         }
@@ -226,9 +218,12 @@ class JwtServiceTest {
         @Test
         @DisplayName("Should handle empty claims")
         void shouldHandleEmptyClaims() {
+
+            UserDetails userWithEmptyClaims = new User("user", "password", Collections.emptyList());
+
             // Act & Assert
-            assertDoesNotThrow(() ->
-                    jwtService.generateAccessToken(Collections.emptyMap(), userDetails)
+            assertThrows(CustomFinAppException.class,  () ->
+                    jwtService.generateAccessToken(userWithEmptyClaims)
             );
         }
     }

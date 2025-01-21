@@ -21,6 +21,7 @@ jobs:
       REFRESH_TOKEN_EXPIRATION: ${{ secrets.REFRESH_TOKEN_EXPIRATION }}
       JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
       JWT_AUDIENCE: ${{ secrets.JWT_AUDIENCE }}
+      TEST_JWT_SECRET: ${{ secrets.TEST_JWT_SECRET }}
 
     steps:
       - name: Check out code
@@ -39,6 +40,7 @@ jobs:
             echo "REFRESH_TOKEN_EXPIRATION=${REFRESH_TOKEN_EXPIRATION}" >> ./backend/src/test/resources/.env
             echo "JWT_ISSUER=${JWT_ISSUER}" >> ./backend/src/test/resources/.env
             echo "JWT_AUDIENCE=${JWT_AUDIENCE}" >> ./backend/src/test/resources/.env
+            echo "TEST_JWT_SECRET=${TEST_JWT_SECRET}" >> ./backend/src/test/resources/.env
 
       - name: Set up JDK
         uses: actions/setup-java@v3

@@ -1,6 +1,7 @@
 package com.finapp.backend.security.service;
 
 import com.finapp.backend.exception.CustomFinAppException;
+import com.finapp.backend.exception.TokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.DecodingException;
@@ -75,7 +76,7 @@ public class JwtService {
             byte[] keyBytes = Decoders.BASE64.decode(JWT_SECRET);
             return Keys.hmacShaKeyFor(keyBytes);
         } catch (DecodingException e) {
-            throw new CustomFinAppException("Error decoding secret. Couldn't get Jwt sign key.");
+            throw new CustomFinAppException("Error decoding secret. Hence, couldn't get Jwt sign key.");
         } catch (WeakKeyException e) {
             throw new CustomFinAppException("A weak key exception occurred while trying to get sign key for jwt.");
         }
@@ -117,6 +118,7 @@ public class JwtService {
         } catch (InvalidKeyException e) {
             throw new CustomFinAppException("Invalid JWT sign key.");
         } catch (Exception e) {
+            LOGGER.error("An error occurred:", e);
             throw new CustomFinAppException("An unexpected error occurred while building jwt.");
         }
     }
@@ -138,17 +140,22 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
+        if (userDetails == null) {
+            throw new TokenException("Null user principal. Unable to validate token. ");
+        }
+
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    public String generateAccessToken(Map<String, Object> claims, UserDetails userDetails) {
-        return buildToken(claims, userDetails, ACCESS_TOKEN_EXPIRATION);
-    }
-
     public String generateAccessToken(UserDetails userDetails) {
+        if (userDetails == null) {
+            throw new TokenException("Null user principal. Unable to generate access token. ");
+        }
+
         var claims = createUserClaims(userDetails);
-        return generateAccessToken(claims, userDetails);
+        return buildToken(claims, userDetails, ACCESS_TOKEN_EXPIRATION);
+
     }
 
     public String generateRefreshToken(UserDetails userDetails) {
@@ -157,6 +164,11 @@ public class JwtService {
     }
 
     public Map<String, Object> createUserClaims(UserDetails userDetails) {
+        if (userDetails.getAuthorities().isEmpty()){
+            LOGGER.error("User has empty authorities list.");
+            throw new CustomFinAppException("User does not have the required access.");
+        }
+
         try {
             var claims = new HashMap<String, Object>();
             List<String> authorities = userDetails.getAuthorities()
