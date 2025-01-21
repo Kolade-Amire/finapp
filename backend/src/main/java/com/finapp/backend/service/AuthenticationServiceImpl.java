@@ -46,6 +46,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
+    private final ObjectMapper objectMapper;
 
     private String doPasswordsMatch(String p1, String p2) {
         if (!p1.equals(p2)) {
@@ -207,8 +208,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                             .build();
 
                     OutputStream outputStream = response.getOutputStream();
-                    ObjectMapper mapper = new ObjectMapper();
-                    mapper.writeValue(outputStream, authResponse);
+
+                    objectMapper.writeValue(outputStream, authResponse);
                     outputStream.flush();
                 }
 
