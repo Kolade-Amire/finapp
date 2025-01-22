@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface RedisTokenRepository extends ListCrudRepository<Token, Integer> {
+public interface RedisTokenRepository extends ListCrudRepository<Token, Long> {
 
     Optional<Token> findByToken(String token);
 

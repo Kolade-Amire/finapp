@@ -67,17 +67,7 @@ public class UserServiceImpl implements UserService {
         try {
             User savedUser = userRepository.save(user);
 
-            return UserDto.builder()
-                    .id(savedUser.getId().toString())
-                    .firstname(savedUser.getFirstname())
-                    .lastname(savedUser.getLastname())
-                    .email(savedUser.getEmail())
-                    .phoneNumber(savedUser.getPhoneNumber())
-                    .profilePicture(savedUser.getProfilePictureUrl())
-                    .role(savedUser.getRole())
-                    .createdAt(savedUser.getCreatedAt())
-                    .lastLoginAt(savedUser.getLastLoginAt())
-                    .build();
+            return UserDtoMapper.mapUserToDto(savedUser);
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
@@ -142,8 +132,11 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUsersDueForDeletion() {
-        userRepository.deleteByDeletionDateBefore(LocalDateTime.now(ZoneOffset.UTC));
+        try {
+            userRepository.deleteByDeletionDateBefore(LocalDateTime.now(ZoneOffset.UTC));
+        } catch (Exception e) {
+            LOGGER.error("An unexpected error occurred while trying to delete accounts due for deletion", e);
+        }
     }
-
 
 }
