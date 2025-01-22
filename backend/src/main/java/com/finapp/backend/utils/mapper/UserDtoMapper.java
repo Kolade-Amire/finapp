@@ -18,6 +18,7 @@ public class UserDtoMapper {
                 .role(user.getRole())
                 .createdAt(user.getCreatedAt())
                 .lastLoginAt(user.getLastLoginAt())
+                .updatedAt(user.getUpdatedAt())
                 .build();
     }
 

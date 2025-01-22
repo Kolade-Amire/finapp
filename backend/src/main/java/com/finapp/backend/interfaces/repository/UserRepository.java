@@ -1,11 +1,8 @@
 package com.finapp.backend.interfaces.repository;
 
 import com.finapp.backend.domain.User;
-import com.finapp.backend.dto.auth.UserDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.stereotype.Repository;
 
