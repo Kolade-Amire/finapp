@@ -87,7 +87,7 @@ public class AuthenticationServiceUnitTest {
     private AuthenticationRequest authenticationRequest;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
 
         // Setup test user
         testUser = User.builder()
@@ -197,8 +197,8 @@ public class AuthenticationServiceUnitTest {
 
 
             verify(authenticationManager, times(1)).authenticate(new UsernamePasswordAuthenticationToken(
-                            TEST_EMAIL,
-                            TEST_PASSWORD)
+                    TEST_EMAIL,
+                    TEST_PASSWORD)
             );
             verify(tokenService, times(1)).saveToken(tokenCaptor.capture());
 
@@ -252,7 +252,6 @@ public class AuthenticationServiceUnitTest {
 
         @Mock
         private ServletOutputStream outputStream;
-
 
 
         @Test

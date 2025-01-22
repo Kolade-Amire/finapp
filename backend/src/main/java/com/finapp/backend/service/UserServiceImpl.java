@@ -142,7 +142,11 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUsersDueForDeletion() {
-        userRepository.deleteByDeletionDateBefore(LocalDateTime.now(ZoneOffset.UTC));
+        try {
+            userRepository.deleteByDeletionDateBefore(LocalDateTime.now(ZoneOffset.UTC));
+        } catch (Exception e) {
+            LOGGER.error("An unexpected error occurred while trying to delete accounts due for deletion", e);
+        }
     }
 
 
