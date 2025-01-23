@@ -138,7 +138,7 @@ public class UserServiceTest {
 
             //Arrange
             var testId = UUID.randomUUID();
-            when(userRepository.findById(testId)).thenThrow(EntityNotFoundException.class);
+            when(userRepository.findById(testId)).thenReturn(Optional.empty());
 
             //Act & Assert
             assertThrows(EntityNotFoundException.class, () -> userService.findById(testId));
@@ -153,7 +153,7 @@ public class UserServiceTest {
 
             //Arrange
             String invalidEmail = "invalidemail@notexist.com";
-            when(userRepository.findByEmail(invalidEmail)).thenThrow(EntityNotFoundException.class);
+            when(userRepository.findByEmail(invalidEmail)).thenReturn(Optional.empty());
 
             //Act & Assert
             assertThrows(EntityNotFoundException.class, () -> userService.findByEmail(invalidEmail));
@@ -245,6 +245,7 @@ public class UserServiceTest {
         }
     }
 
+
     @Nested
     @DisplayName("User Deletion Tests")
     class UserDeletionTests {
@@ -308,15 +309,15 @@ public class UserServiceTest {
 
         @Test
         void getUsersScheduledForDeletion_ShouldReturnEmptyPage_WhenNoUsersFound() {
-            // Given
+            // Arrange
             Pageable pageable = PageRequest.of(0, 10);
             when(userRepository.findByDeletionDateBeforeOrderByFirstname(any(LocalDateTime.class), eq(pageable)))
                     .thenReturn(new PageImpl<>(List.of()));
 
-            // When
+            // Act
             Page<UserDto> result = userService.getUsersScheduledForDeletion(pageable);
 
-            // Then
+            // Assert
             assertNotNull(result);
             assertTrue(result.getContent().isEmpty());
             assertEquals(0, result.getTotalElements());
@@ -324,14 +325,14 @@ public class UserServiceTest {
 
         @Test
         void deleteUsersDueForDeletion_ShouldDeleteUsers() {
-            // Given
+            // Arrange
             doNothing().when(userRepository).deleteByDeletionDateBefore(any(LocalDateTime.class));
 
-            // When
+            // Act
             userService.deleteUsersDueForDeletion();
 
-            // Then
-            verify(userRepository).deleteByDeletionDateBefore(localDateTimeCaptor.capture());
+            // Assert
+            verify(userRepository, times(1)).deleteByDeletionDateBefore(localDateTimeCaptor.capture());
             LocalDateTime capturedDateTime = localDateTimeCaptor.getValue();
             assertNotNull(capturedDateTime);
 
