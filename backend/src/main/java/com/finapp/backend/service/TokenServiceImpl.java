@@ -45,7 +45,7 @@ public class TokenServiceImpl implements TokenService {
         try {
             tokenRepository.delete(token);
         } catch (Exception e) {
-            throw new CustomFinAppException("An unexpected error (from redis data) occurred while trying to delete user's refresh token");
+            throw new CustomFinAppException("An unexpected error (from redis) occurred while trying to delete user's refresh token");
         }
     }
 
