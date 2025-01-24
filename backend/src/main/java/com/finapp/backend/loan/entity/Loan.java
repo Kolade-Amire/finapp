@@ -27,10 +27,22 @@ public class Loan {
     private UUID borrowerId;
 
     @Column(nullable = false)
-    private double loanAmount;
+    private double loanPrincipal;
+
+    @Column(nullable = false)
+    private double totalRepayment;
 
     @Column(nullable = false)
     private int tenure;
+
+    @Column(nullable = false)
+    private double repaymentPerPeriod;
+
+    @Column(nullable = false)
+    private RepaymentFrequency repaymentFrequency;
+
+    @Column(nullable = false)
+    private double totalInterest;
 
     @Column(nullable = false)
     private double interestRate;
