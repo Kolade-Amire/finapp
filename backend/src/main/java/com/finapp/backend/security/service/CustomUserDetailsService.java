@@ -1,8 +1,8 @@
 package com.finapp.backend.security.service;
 
-import com.finapp.backend.domain.User;
-import com.finapp.backend.domain.UserPrincipal;
-import com.finapp.backend.interfaces.repository.UserRepository;
+import com.finapp.backend.user.entity.User;
+import com.finapp.backend.user.entity.UserPrincipal;
+import com.finapp.backend.user.interfaces.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

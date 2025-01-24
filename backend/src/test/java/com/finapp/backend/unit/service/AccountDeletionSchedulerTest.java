@@ -1,8 +1,8 @@
 package com.finapp.backend.unit.service;
 
 
-import com.finapp.backend.interfaces.service.UserService;
-import com.finapp.backend.scheduler.AccountDeletionScheduler;
+import com.finapp.backend.user.interfaces.UserService;
+import com.finapp.backend.user.service.AccountDeletionScheduler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

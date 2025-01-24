@@ -1,9 +1,9 @@
 package com.finapp.backend.security.service;
 
-import com.finapp.backend.domain.Token;
+import com.finapp.backend.security.entity.Token;
 import com.finapp.backend.exception.TokenException;
-import com.finapp.backend.interfaces.repository.RedisTokenRepository;
-import com.finapp.backend.interfaces.service.TokenService;
+import com.finapp.backend.security.repository.RedisTokenRepository;
+import com.finapp.backend.security.repository.TokenService;
 import com.finapp.backend.utils.AppConstants;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

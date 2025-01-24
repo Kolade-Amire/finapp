@@ -1,9 +1,9 @@
 package com.finapp.backend.unit.security;
 
-import com.finapp.backend.domain.Token;
+import com.finapp.backend.security.entity.Token;
 import com.finapp.backend.exception.TokenException;
-import com.finapp.backend.interfaces.repository.RedisTokenRepository;
-import com.finapp.backend.service.TokenServiceImpl;
+import com.finapp.backend.security.repository.RedisTokenRepository;
+import com.finapp.backend.security.service.TokenServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

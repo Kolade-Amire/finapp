@@ -1,11 +1,11 @@
 package com.finapp.backend.unit.service;
 
-import com.finapp.backend.domain.User;
-import com.finapp.backend.dto.auth.UserDto;
-import com.finapp.backend.dto.user.UserUpdateDto;
-import com.finapp.backend.interfaces.repository.UserRepository;
+import com.finapp.backend.user.entity.User;
+import com.finapp.backend.user.dto.UserDto;
+import com.finapp.backend.user.dto.UserUpdateDto;
+import com.finapp.backend.user.interfaces.UserRepository;
 import com.finapp.backend.security.enums.Role;
-import com.finapp.backend.service.UserServiceImpl;
+import com.finapp.backend.user.service.UserServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

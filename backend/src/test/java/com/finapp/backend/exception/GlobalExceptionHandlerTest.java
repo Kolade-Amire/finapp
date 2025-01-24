@@ -1,7 +1,7 @@
 package com.finapp.backend.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.finapp.backend.dto.auth.RegistrationRequest;
+import com.finapp.backend.security.dto.RegistrationRequest;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
