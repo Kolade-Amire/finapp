@@ -1,4 +1,4 @@
-package com.finapp.backend.unit.security;
+package com.finapp.backend.security.unit;
 
 import com.finapp.backend.security.entity.Token;
 import com.finapp.backend.exception.TokenException;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-public class TokenServiceTest {
+public class TokenServiceUnitTest {
 
     @Mock
     private RedisTokenRepository tokenRepository;

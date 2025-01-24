@@ -1,4 +1,4 @@
-package com.finapp.backend.unit.security;
+package com.finapp.backend.security.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finapp.backend.config.TestJacksonConfig;

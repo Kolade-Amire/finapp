@@ -1,4 +1,4 @@
-package com.finapp.backend.unit.service;
+package com.finapp.backend.user.unit;
 
 
 import com.finapp.backend.user.interfaces.UserService;
