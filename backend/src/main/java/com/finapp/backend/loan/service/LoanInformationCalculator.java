@@ -4,6 +4,9 @@ package com.finapp.backend.loan.service;
 import com.finapp.backend.loan.entity.LoanRepaymentInformation;
 import com.finapp.backend.loan.entity.RepaymentFrequency;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class LoanInformationCalculator {
 
     /*
@@ -17,12 +20,15 @@ public class LoanInformationCalculator {
     Repayment per Period = Total Repayment/Number of Periods
 
      */
-    public static LoanRepaymentInformation calculateMonthlyInstallment(double principal, double monthlyRate, int tenureInMonths) {
-        double totalInterest = principal * tenureInMonths * monthlyRate;
+    public static LoanRepaymentInformation calculateMonthlyInstallment(BigDecimal principal, double monthlyRate, int tenureInMonths) {
+        BigDecimal totalInterest = principal.multiply(new BigDecimal(tenureInMonths * monthlyRate))
+                .setScale(2, RoundingMode.HALF_UP);
 
-        double totalRepayment = principal + totalInterest;
+        BigDecimal totalRepayment = principal.add(totalInterest)
+                .setScale(2, RoundingMode.HALF_UP);
 
-        double repaymentPerPeriod = totalRepayment / tenureInMonths;
+        BigDecimal repaymentPerPeriod = totalRepayment.divide(new BigDecimal(tenureInMonths), RoundingMode.HALF_UP)
+                .setScale(2, RoundingMode.HALF_UP);
 
         return LoanRepaymentInformation.builder()
                 .rate(monthlyRate)

@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -27,22 +28,22 @@ public class Loan {
     private UUID borrowerId;
 
     @Column(nullable = false)
-    private double loanPrincipal;
+    private BigDecimal loanPrincipal;
 
     @Column(nullable = false)
-    private double totalRepayment;
+    private BigDecimal totalRepayment;
 
     @Column(nullable = false)
     private int tenure;
 
     @Column(nullable = false)
-    private double repaymentPerPeriod;
+    private BigDecimal repaymentPerPeriod;
 
     @Column(nullable = false)
     private RepaymentFrequency repaymentFrequency;
 
     @Column(nullable = false)
-    private double totalInterest;
+    private BigDecimal totalInterest;
 
     @Column(nullable = false)
     private double interestRate;
@@ -53,10 +54,7 @@ public class Loan {
     @Column(nullable = false)
     private DisbursementStatus disbursementStatus;
 
-    @Column(nullable = false)
-    private double emi;
-
-    private Double remainingBalance;
+    private BigDecimal remainingBalance;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

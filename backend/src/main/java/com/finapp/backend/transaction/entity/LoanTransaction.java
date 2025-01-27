@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ public class LoanTransaction {
     private UUID loanId;
 
     @Column(nullable = false)
-    private double transactionAmount;
+    private BigDecimal transactionAmount;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

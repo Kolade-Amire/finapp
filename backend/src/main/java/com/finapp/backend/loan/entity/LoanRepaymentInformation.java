@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Builder;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @ToString
@@ -14,9 +16,9 @@ import lombok.Builder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoanRepaymentInformation {
-    private double totalInterest;
+    private BigDecimal totalInterest;
     private double rate;
     private RepaymentFrequency repaymentFrequency;
-    private double totalRepayment;
-    private double repaymentPerPeriod;
+    private BigDecimal totalRepayment;
+    private BigDecimal repaymentPerPeriod;
 }
