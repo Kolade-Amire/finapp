@@ -1,12 +1,13 @@
 package com.finapp.backend.loan.interfaces;
 
-import com.finapp.backend.loan.entity.Loan;
+import com.finapp.backend.loan.entity.PenaltyConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public interface LoanRepository extends JpaRepository<Loan, UUID> {
+public interface PenaltyConfigRepository extends JpaRepository<PenaltyConfig, UUID> {
 
+    PenaltyConfig findPenaltyConfigByLoanId(UUID loanId);
 }

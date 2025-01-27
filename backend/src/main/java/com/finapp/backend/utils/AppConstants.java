@@ -11,12 +11,15 @@ public class AppConstants {
 
 
     //Error Strings
+    //User
     public static final String USER_NOT_FOUND = "User does not exist.";
     public static final String INCORRECT_CREDENTIALS = "Invalid Email/Password, please try again.";
     public static final String ACCESS_DENIED = "You do not have permission to access this page";
     public static final String FORBIDDEN_MESSAGE = "You need to log in to access this page";
     public static final String PASSWORDS_MISMATCH = "Passwords do not match!";
     public static final String APPLICATION_ERROR = "An unexpected error occurred in the application.";
+    //Loan
+    public static final String LOAN_NOT_FOUND = "Loan does not exist.";
 
 
     //Rest API

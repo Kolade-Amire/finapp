@@ -1,5 +1,6 @@
 package com.finapp.backend.loan.entity;
 
+import com.finapp.backend.loan.enums.InstallmentFrequency;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -18,7 +19,7 @@ import java.math.BigDecimal;
 public class LoanRepaymentInformation {
     private BigDecimal totalInterest;
     private double rate;
-    private RepaymentFrequency repaymentFrequency;
+    private InstallmentFrequency installmentFrequency;
     private BigDecimal totalRepayment;
     private BigDecimal repaymentPerPeriod;
 }

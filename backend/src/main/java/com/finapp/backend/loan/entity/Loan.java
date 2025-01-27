@@ -1,5 +1,8 @@
 package com.finapp.backend.loan.entity;
 
+import com.finapp.backend.loan.enums.DisbursementStatus;
+import com.finapp.backend.loan.enums.LoanStatus;
+import com.finapp.backend.loan.enums.InstallmentFrequency;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -21,7 +25,7 @@ import java.util.UUID;
 public class Loan {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private UUID id;
 
     @Column(nullable = false)
@@ -34,13 +38,13 @@ public class Loan {
     private BigDecimal totalRepayment;
 
     @Column(nullable = false)
-    private int tenure;
+    private int tenureInMonths;
 
     @Column(nullable = false)
-    private BigDecimal repaymentPerPeriod;
+    private BigDecimal installmentPerPeriod;
 
     @Column(nullable = false)
-    private RepaymentFrequency repaymentFrequency;
+    private InstallmentFrequency installmentFrequency;
 
     @Column(nullable = false)
     private BigDecimal totalInterest;
@@ -56,10 +60,14 @@ public class Loan {
 
     private BigDecimal remainingBalance;
 
+    private BigDecimal totalPenaltyAmount;
+
+    private LocalDate lastPenaltyDate;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 }

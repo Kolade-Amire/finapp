@@ -1,5 +1,7 @@
 package com.finapp.backend.transaction.entity;
 
+import com.finapp.backend.transaction.enums.LoanTransactionType;
+import com.finapp.backend.transaction.enums.TransactionStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

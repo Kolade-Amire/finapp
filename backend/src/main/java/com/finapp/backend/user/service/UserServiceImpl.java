@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            throw new SaveEntityException("An error occurred while trying to save user details.");
+            throw new SaveEntityException("An error occurred while trying to save user.");
         }
     }
 

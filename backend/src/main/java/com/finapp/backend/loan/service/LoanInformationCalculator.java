@@ -2,7 +2,7 @@ package com.finapp.backend.loan.service;
 
 
 import com.finapp.backend.loan.entity.LoanRepaymentInformation;
-import com.finapp.backend.loan.entity.RepaymentFrequency;
+import com.finapp.backend.loan.enums.InstallmentFrequency;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,7 +33,7 @@ public class LoanInformationCalculator {
         return LoanRepaymentInformation.builder()
                 .rate(monthlyRate)
                 .repaymentPerPeriod(repaymentPerPeriod)
-                .repaymentFrequency(RepaymentFrequency.MONTHLY)
+                .installmentFrequency(InstallmentFrequency.MONTHLY)
                 .totalInterest(totalInterest)
                 .totalRepayment(totalRepayment)
                 .build();
