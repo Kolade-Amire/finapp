@@ -9,4 +9,5 @@ public interface LoanInstallmentManagementService {
 
     List<LoanInstallment> retrieveOverduePayments(LocalDate date);
     void batchSave(List<LoanInstallment> installments);
+
 }

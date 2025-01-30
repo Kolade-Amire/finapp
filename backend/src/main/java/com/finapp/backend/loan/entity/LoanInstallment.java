@@ -48,6 +48,10 @@ public class LoanInstallment {
 
     private BigDecimal penalty = BigDecimal.ZERO;
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String notes;
+
 
     @PrePersist
     protected void onCreate() {

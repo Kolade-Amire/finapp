@@ -4,6 +4,7 @@ import com.finapp.backend.loan.dto.LoanDto;
 import com.finapp.backend.loan.dto.LoanUpdateDto;
 import com.finapp.backend.loan.entity.Loan;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,4 +16,5 @@ public interface LoanService {
     LoanDto saveLoan(Loan loan);
     void saveAll(List<Loan> loans);
     void deleteLoan(String id);
+    void processOverdueInstallments(LocalDate date);
 }
