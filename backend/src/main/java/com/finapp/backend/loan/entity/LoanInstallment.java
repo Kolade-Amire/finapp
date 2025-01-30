@@ -41,7 +41,7 @@ public class LoanInstallment {
     @Column(nullable = false)
     private LoanPaymentStatus paymentStatus;
 
-    private int daysOverdue;
+    private long daysOverdue;
 
     @Column(nullable = false)
     private LocalDateTime lastUpdated;

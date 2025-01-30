@@ -6,5 +6,5 @@ import com.finapp.backend.loan.entity.LoanInstallment;
 import java.math.BigDecimal;
 
 public interface PenaltyStrategy {
-    BigDecimal calculatePenalty(LoanInstallment loanInstallment, Loan loan);
+    BigDecimal calculatePenalty(LoanInstallment loanInstallment);
 }
