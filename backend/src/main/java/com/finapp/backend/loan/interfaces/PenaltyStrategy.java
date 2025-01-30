@@ -1,10 +1,10 @@
 package com.finapp.backend.loan.interfaces;
 
-import com.finapp.backend.loan.entity.LoanPaymentSchedule;
-import com.finapp.backend.loan.entity.PenaltyConfig;
+import com.finapp.backend.loan.entity.Loan;
+import com.finapp.backend.loan.entity.LoanInstallment;
 
 import java.math.BigDecimal;
 
 public interface PenaltyStrategy {
-    BigDecimal calculatePenalty(LoanPaymentSchedule loanPaymentSchedule, PenaltyConfig penaltyConfig);
+    BigDecimal calculatePenalty(LoanInstallment loanInstallment, Loan loan);
 }

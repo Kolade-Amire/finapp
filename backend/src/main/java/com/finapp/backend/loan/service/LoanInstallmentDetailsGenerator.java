@@ -7,7 +7,7 @@ import com.finapp.backend.loan.enums.InstallmentFrequency;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class LoanInformationCalculator {
+public class LoanInstallmentDetailsGenerator {
 
     /*
     Simple Interest Calculation:

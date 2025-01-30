@@ -17,7 +17,7 @@ public class LoanMapper {
                 .interestRate(loan.getInterestRate())
                 .loanStatus(loan.getLoanStatus())
                 .remainingBalance(loan.getRemainingBalance())
-                .totalPenaltyAmount(loan.getTotalPenaltyAmount())
+                .totalPenaltyAccrued(loan.getTotalPenaltyAccrued())
                 .lastPenaltyDate(loan.getLastPenaltyDate())
                 .totalRepayment(loan.getTotalRepayment())
                 .createdAt(loan.getCreatedAt())
@@ -50,7 +50,7 @@ public class LoanMapper {
             existingLoan.setRemainingBalance(newDetails.getRemainingBalance());
         }
         if (newDetails.getTotalPenaltyAmount() != null) {
-            existingLoan.setTotalPenaltyAmount(newDetails.getTotalPenaltyAmount());
+            existingLoan.setTotalPenaltyAccrued(newDetails.getTotalPenaltyAmount());
         }if (newDetails.getLastPenaltyDate() != null) {
             existingLoan.setLastPenaltyDate(newDetails.getLastPenaltyDate());
         }

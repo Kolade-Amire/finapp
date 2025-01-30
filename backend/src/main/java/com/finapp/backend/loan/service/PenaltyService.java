@@ -1,9 +1,9 @@
 package com.finapp.backend.loan.service;
 
 import com.finapp.backend.loan.entity.Loan;
-import com.finapp.backend.loan.entity.LoanPaymentSchedule;
+import com.finapp.backend.loan.entity.LoanInstallment;
 import com.finapp.backend.loan.entity.PenaltyConfig;
-import com.finapp.backend.loan.interfaces.LoanPaymentScheduleService;
+import com.finapp.backend.loan.interfaces.LoanInstallmentManagementService;
 import com.finapp.backend.loan.interfaces.LoanService;
 import com.finapp.backend.loan.interfaces.PenaltyConfigRepository;
 import com.finapp.backend.loan.interfaces.PenaltyStrategy;
@@ -23,23 +23,24 @@ import java.util.UUID;
 public class PenaltyService {
 
     private final Map<String, PenaltyStrategy> penaltyStrategyMap;
-    private final LoanPaymentScheduleService loanPaymentScheduleService;
+    private final LoanInstallmentManagementService loanInstallmentManagementService;
     private final PenaltyConfigRepository penaltyConfigRepository;
     private final LoanService loanService;
 
     @Scheduled(cron = "0 0 2 * * ?", zone = "UTC") // 8 A.M daily
     public void calculateDailyPenalties() {
         LocalDate today = LocalDate.now(ZoneOffset.UTC);
-        List<LoanPaymentSchedule> overduePayments = loanPaymentScheduleService.retrieveOverduePayments(today);
+        List<LoanInstallment> overdueInstallments = loanInstallmentManagementService.retrieveOverduePayments(today);
 
         //update loans with penalties
-        overduePayments.forEach(loanPaymentSchedule -> {
-                    UUID loanId = loanPaymentSchedule.getLoanId();
-                    Loan loan = loanService.findById(loanId);
-                    PenaltyConfig penaltyConfig = penaltyConfigRepository.findPenaltyConfigByLoanId(loanId);
+        overdueInstallments.forEach(loanInstallment -> {
+
+                    Loan loan = loanInstallment.getLoan();
+                    PenaltyConfig penaltyConfig = loan.getPenaltyConfig();
                     PenaltyStrategy strategy = penaltyStrategyMap.get(penaltyConfig.getCalculationStrategy().toString());
-                    BigDecimal penalty = strategy.calculatePenalty(loanPaymentSchedule, penaltyConfig);
-                    loan.setTotalPenaltyAmount(loan.getTotalPenaltyAmount().add(penalty));
+
+                    BigDecimal penalty = strategy.calculatePenalty(loanInstallment, loan);
+                    loan.setTotalPenaltyAccrued(loan.getTotalPenaltyAccrued().add(penalty));
                     loan.setLastPenaltyDate(today);
                     //TODO:create audit record, update other related entities || fix multiple saves issue
                     loanService.saveLoan(loan);

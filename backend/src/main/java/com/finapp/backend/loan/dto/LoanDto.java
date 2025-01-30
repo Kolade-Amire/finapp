@@ -29,7 +29,7 @@ public class LoanDto {
     private double interestRate;
     private LoanStatus loanStatus;
     private BigDecimal remainingBalance;
-    private BigDecimal totalPenaltyAmount;
+    private BigDecimal totalPenaltyAccrued;
     private LocalDate lastPenaltyDate;
     private BigDecimal totalRepayment;
     private LocalDateTime createdAt;
