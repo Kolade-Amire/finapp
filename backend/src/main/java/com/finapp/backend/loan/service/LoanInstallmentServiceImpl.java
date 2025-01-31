@@ -3,7 +3,7 @@ package com.finapp.backend.loan.service;
 import com.finapp.backend.exception.CustomFinAppException;
 import com.finapp.backend.loan.entity.LoanInstallment;
 import com.finapp.backend.loan.interfaces.LoanInstallmentService;
-import com.finapp.backend.loan.interfaces.LoanInstallmentRepository;
+import com.finapp.backend.loan.repository.LoanInstallmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

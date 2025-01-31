@@ -10,7 +10,7 @@ import com.finapp.backend.loan.entity.LoanInstallment;
 import com.finapp.backend.loan.entity.PenaltyConfig;
 import com.finapp.backend.loan.enums.LoanPaymentStatus;
 import com.finapp.backend.loan.interfaces.LoanInstallmentService;
-import com.finapp.backend.loan.interfaces.LoanRepository;
+import com.finapp.backend.loan.repository.LoanRepository;
 import com.finapp.backend.loan.interfaces.LoanService;
 import com.finapp.backend.loan.interfaces.PenaltyStrategy;
 import com.finapp.backend.utils.AppConstants;

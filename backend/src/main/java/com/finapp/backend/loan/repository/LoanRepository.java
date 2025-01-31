@@ -1,4 +1,4 @@
-package com.finapp.backend.loan.interfaces;
+package com.finapp.backend.loan.repository;
 
 import com.finapp.backend.loan.entity.Loan;
 import org.springframework.data.jpa.repository.JpaRepository;

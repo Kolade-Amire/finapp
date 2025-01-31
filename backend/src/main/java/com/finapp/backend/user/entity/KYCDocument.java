@@ -28,7 +28,7 @@ public class KYCDocument {
     private String storagePath; // Reference to encrypted document storage
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "verification_id")
+    @JoinColumn(name = "verification_id", nullable = false)
     private KYCVerification verification;
 
     private boolean verifiedBySystem;

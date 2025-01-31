@@ -24,7 +24,7 @@ public class KYCProfile {
     private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", unique = true)
+    @JoinColumn(name = "user_id", unique = true, nullable = false)
     private User user;
 
     @Enumerated(EnumType.STRING)

@@ -22,6 +22,7 @@ public class KYCVerification {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kyc_profile_id", unique = true, nullable = false)
     private KYCProfile kycProfile;
 
     @Enumerated(EnumType.STRING)

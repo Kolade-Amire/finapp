@@ -59,9 +59,6 @@ public class User {
     @Column(nullable = false)
     private boolean isAccountExpired;
 
-    @OneToOne(mappedBy = "user")
-    private KYCProfile kycProfile;
-
     @Column(nullable = false)
     private boolean isKycComplete;
 

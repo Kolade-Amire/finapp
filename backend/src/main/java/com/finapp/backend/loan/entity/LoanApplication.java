@@ -2,6 +2,7 @@ package com.finapp.backend.loan.entity;
 
 import com.finapp.backend.loan.enums.LoanApplicationStatus;
 import com.finapp.backend.loan.enums.LoanPurpose;
+import com.finapp.backend.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,8 +24,9 @@ public class LoanApplication {
     @GeneratedValue
     private UUID id;
 
-    @Column(nullable = false)
-    private UUID borrowerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private User borrower;
 
     @Column(nullable = false)
     private BigDecimal requestedAmount;
@@ -54,8 +56,6 @@ public class LoanApplication {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private LoanApplicationStatus status = LoanApplicationStatus.PENDING;
-
-    private UUID assignedLoanOfficerId;
 
     private LocalDate decisionDate;
 
