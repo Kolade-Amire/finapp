@@ -5,7 +5,7 @@ import com.finapp.backend.loan.entity.LoanInstallment;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface LoanInstallmentManagementService {
+public interface LoanInstallmentService {
 
     List<LoanInstallment> retrieveOverduePayments(LocalDate date);
     void batchSave(List<LoanInstallment> installments);

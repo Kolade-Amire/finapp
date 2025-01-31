@@ -13,16 +13,22 @@ import static com.finapp.backend.security.enums.Permissions.*;
 @Getter
 @RequiredArgsConstructor
 public enum Role {
-    ADMIN_VIEW(
+    CUSTOMER_SERVICE(
             Set.of(
                     ADMIN_READ
             )
     ),
-    ADMIN_FULL(
+    ADMIN(
             Set.of(
                     ADMIN_READ,
                     ADMIN_CREATE,
                     ADMIN_DELETE,
+                    ADMIN_UPDATE
+            )
+    ),
+    LOAN_OFFICER(
+            Set.of(
+                    ADMIN_READ,
                     ADMIN_UPDATE
             )
     ),

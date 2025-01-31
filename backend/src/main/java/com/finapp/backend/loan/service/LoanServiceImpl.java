@@ -9,7 +9,7 @@ import com.finapp.backend.loan.entity.Loan;
 import com.finapp.backend.loan.entity.LoanInstallment;
 import com.finapp.backend.loan.entity.PenaltyConfig;
 import com.finapp.backend.loan.enums.LoanPaymentStatus;
-import com.finapp.backend.loan.interfaces.LoanInstallmentManagementService;
+import com.finapp.backend.loan.interfaces.LoanInstallmentService;
 import com.finapp.backend.loan.interfaces.LoanRepository;
 import com.finapp.backend.loan.interfaces.LoanService;
 import com.finapp.backend.loan.interfaces.PenaltyStrategy;
@@ -35,7 +35,7 @@ public class LoanServiceImpl implements LoanService {
     public static final Logger LOGGER = LoggerFactory.getLogger(LoanServiceImpl.class);
 
     private final LoanRepository loanRepository;
-    private final LoanInstallmentManagementService loanInstallmentManagementService;
+    private final LoanInstallmentService loanInstallmentService;
     private final Map<String, PenaltyStrategy> penaltyStrategyMap;
 
 
@@ -117,19 +117,20 @@ public class LoanServiceImpl implements LoanService {
     @Override
     @Transactional
     public void processOverdueInstallments(LocalDate today) {
-        List<LoanInstallment> overdueInstallments = loanInstallmentManagementService.retrieveOverduePayments(today);
+        List<LoanInstallment> overdueInstallments = loanInstallmentService.retrieveOverduePayments(today);
 
         //update loans with penalties
         overdueInstallments.forEach(loanInstallment -> {
                     Loan loan = loanInstallment.getLoan();
-                    BigDecimal maxPenalty = returnMaxPenalty(loan.getLoanPrincipal());
-                    BigDecimal currentTotalPenaltyAccrued = loan.getTotalPenaltyAccrued();
-                    long daysOverdue = calculateDaysOverdue(loanInstallment.getDueDate(), today);
+                    //30% of principal
+                    BigDecimal maxPenalty = loan.getLoanPrincipal().multiply(BigDecimal.valueOf(0.3));
+                    BigDecimal currentTotalPenalty = loan.getTotalPenaltyAccrued();
+                    long daysOverdue = ChronoUnit.DAYS.between(loanInstallment.getDueDate(), today);
 
                     loanInstallment.setDaysOverdue(daysOverdue);
 
                     // **Skip penalty calculation for current loan if the limit is already reached**
-                    if (currentTotalPenaltyAccrued.compareTo(maxPenalty) >= 0) {
+                    if (currentTotalPenalty.compareTo(maxPenalty) >= 0) {
                         loan.setTotalPenaltyAccrued(maxPenalty);
                         loanInstallment.setNotes(loanInstallment.getNotes() + "\n" + today.toString() + ": Penalty has reached penalty limit. So penalty calculation is halted. Check loan details for information on total accrued penalty.");
                         return;
@@ -141,17 +142,17 @@ public class LoanServiceImpl implements LoanService {
 
                     //calculate penalty
                     BigDecimal penalty = strategy.calculatePenalty(loanInstallment);
-                    BigDecimal newTotalPenalty = currentTotalPenaltyAccrued.add(penalty);
+                    BigDecimal newTotalPenalty = currentTotalPenalty.add(penalty);
 
                     //checks if total penalty accrued after adding penalty is greater than limit
                     if (newTotalPenalty.compareTo(maxPenalty) > 0) {
                         //if true set total penalty accrued to limit
-                        loanInstallment.setPenalty(newTotalPenalty);
-                        loanInstallment.setNotes(loanInstallment.getNotes() + "\n" + today.toString() + ": Penalty for today is calculated to be " + newTotalPenalty + "but penalty has exceeded penalty limit. Check loan details for updated total accrued penalty.");
+                        loanInstallment.setPenalty(penalty);
+                        loanInstallment.setNotes(loanInstallment.getNotes() + "\n" + today.toString() + ": Penalty for today is calculated to be " + penalty + "but total penalty has exceeded penalty limit. Check loan details for updated total accrued penalty.");
                         loan.setTotalPenaltyAccrued(maxPenalty);
                     } else {
+                        loanInstallment.setPenalty(penalty);
                         loan.setTotalPenaltyAccrued(newTotalPenalty);
-                        loanInstallment.setPenalty(newTotalPenalty);
                     }
 
                     loan.setLastPenaltyDate(today);
@@ -160,14 +161,7 @@ public class LoanServiceImpl implements LoanService {
                 }
         );
 
-        loanInstallmentManagementService.batchSave(overdueInstallments);
+        loanInstallmentService.batchSave(overdueInstallments);
     }
 
-    protected BigDecimal returnMaxPenalty(BigDecimal principal) {
-        return principal.multiply(BigDecimal.valueOf(0.3));
-    }
-
-    protected long calculateDaysOverdue(LocalDate dueDate, LocalDate today){
-        return ChronoUnit.DAYS.between(dueDate, today);
-    }
 }

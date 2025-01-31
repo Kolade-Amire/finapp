@@ -1,13 +1,11 @@
 package com.finapp.backend.user.entity;
 
 import com.finapp.backend.security.enums.Role;
+import com.finapp.backend.user.enums.KYCLevel;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Builder;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
+
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
@@ -61,6 +59,16 @@ public class User {
     @Column(nullable = false)
     private boolean isAccountExpired;
 
+    @OneToOne(mappedBy = "user")
+    private KYCProfile kycProfile;
+
+    @Column(nullable = false)
+    private boolean isKycComplete;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private KYCLevel kycLevel;
+
     @Column(nullable = false)
     private boolean isEmailVerified;
 
@@ -77,7 +85,6 @@ public class User {
     protected void onUpdate(){
         updatedAt = LocalDateTime.now(ZoneOffset.UTC);
     }
-
 
 
     @Override

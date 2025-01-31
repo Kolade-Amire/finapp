@@ -38,6 +38,7 @@ public class LoanInstallment {
     @Column(nullable = false)
     private LocalDate gracePeriodEndDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private LoanPaymentStatus paymentStatus;
 

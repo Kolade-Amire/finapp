@@ -43,6 +43,7 @@ public class Loan {
     @Column(nullable = false)
     private BigDecimal installmentPerPeriod;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private InstallmentFrequency installmentFrequency;
 
@@ -55,13 +56,14 @@ public class Loan {
     @Column(nullable = false)
     private LoanStatus loanStatus;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private DisbursementStatus disbursementStatus;
 
     private BigDecimal remainingBalance;
 
     @OneToMany(mappedBy = "loan", cascade = CascadeType.ALL)
-    private List<LoanInstallment> paymentSchedule;
+    private List<LoanInstallment> loanInstallments;
 
     @Embedded
     private PenaltyConfig penaltyConfig;
