@@ -1,4 +1,7 @@
 spring:
+  mvc:
+    problemdetails:
+      enabled: true
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
     username: sa
@@ -14,3 +17,21 @@ spring:
     redis:
       host: localhost
       port: 6379
+
+jwt:
+  secret: ${TEST_JWT_SECRET}
+  issuer: ${JWT_ISSUER}
+  audience: ${JWT_AUDIENCE}
+  access-token-expiration: ${ACCESS_TOKEN_EXPIRATION}
+  refresh-token-expiration: ${REFRESH_TOKEN_EXPIRATION}
+
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  level:
+    org:
+      springframework: ERROR
+      springframework.security: ERROR
+      springframework.boot.autoconfigure: ERROR
+      autoconfigure: ERROR

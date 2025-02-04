@@ -41,5 +41,8 @@ build/
 # Environment files
 .env
 .env.production
+src/test/resources/.env
 .env.*
 !.env.example
+
+src/main/java/com/finapp/backend/TODO.java

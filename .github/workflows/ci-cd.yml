@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, develop, staging ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, develop, staging ]
 
 jobs:
   backend-tests:
@@ -16,6 +16,12 @@ jobs:
       DB_NAME: ${{ secrets.DB_NAME }}
       REDIS_HOST: ${{ secrets.REDIS_HOST }}
       REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      ACCESS_TOKEN_EXPIRATION: ${{ secrets.ACCESS_TOKEN_EXPIRATION }}
+      REFRESH_TOKEN_EXPIRATION: ${{ secrets.REFRESH_TOKEN_EXPIRATION }}
+      JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+      JWT_AUDIENCE: ${{ secrets.JWT_AUDIENCE }}
+      TEST_JWT_SECRET: ${{ secrets.TEST_JWT_SECRET }}
 
     steps:
       - name: Check out code
@@ -23,12 +29,18 @@ jobs:
 
       - name: Create backend env file
         run: |
-            echo "DB_URL=${DB_URL}" >> .env
-            echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
-            echo "DB_USERNAME=${DB_USERNAME}" >> .env
-            echo "DB_NAME=${DB_NAME}" >> .env
-            echo "REDIS_HOST=${REDIS_HOST}" >> .env
-            echo "REDIS_PASSWORD=${REDIS_PASSWORD}" >> .env
+            echo "DB_URL=${DB_URL}" >> ./backend/src/test/resources/.env
+            echo "DB_PASSWORD=${DB_PASSWORD}" >> ./backend/src/test/resources/.env
+            echo "DB_USERNAME=${DB_USERNAME}" >> ./backend/src/test/resources/.env
+            echo "DB_NAME=${DB_NAME}" >> ./backend/src/test/resources/.env
+            echo "REDIS_HOST=${REDIS_HOST}" >> ./backend/src/test/resources/.env
+            echo "REDIS_PASSWORD=${REDIS_PASSWORD}" >> ./backend/src/test/resources/.env
+            echo "JWT_SECRET=${JWT_SECRET}" >> ./backend/src/test/resources/.env
+            echo "ACCESS_TOKEN_EXPIRATION=${ACCESS_TOKEN_EXPIRATION}" >> ./backend/src/test/resources/.env
+            echo "REFRESH_TOKEN_EXPIRATION=${REFRESH_TOKEN_EXPIRATION}" >> ./backend/src/test/resources/.env
+            echo "JWT_ISSUER=${JWT_ISSUER}" >> ./backend/src/test/resources/.env
+            echo "JWT_AUDIENCE=${JWT_AUDIENCE}" >> ./backend/src/test/resources/.env
+            echo "TEST_JWT_SECRET=${TEST_JWT_SECRET}" >> ./backend/src/test/resources/.env
 
       - name: Set up JDK
         uses: actions/setup-java@v3
@@ -88,7 +100,6 @@ jobs:
   docker-build:
     needs: [backend-tests, frontend-tests]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
     env:
       DB_URL: ${{ secrets.DB_URL }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
@@ -97,6 +108,11 @@ jobs:
       NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
       REDIS_HOST: ${{ secrets.REDIS_HOST }}
       REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      ACCESS_TOKEN_EXPIRATION: ${{ secrets.ACCESS_TOKEN_EXPIRATION }}
+      REFRESH_TOKEN_EXPIRATION: ${{ secrets.REFRESH_TOKEN_EXPIRATION }}
+      JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+      JWT_AUDIENCE: ${{ secrets.JWT_AUDIENCE }}
 
     steps:
       - uses: actions/checkout@v3
@@ -110,6 +126,11 @@ jobs:
           echo "DB_NAME=${DB_NAME}" >> .env
           echo "REDIS_HOST=${REDIS_HOST}" >> .env
           echo "REDIS_PASSWORD=${REDIS_PASSWORD}" >> .env
+          echo "JWT_SECRET=${JWT_SECRET}" >> .env
+          echo "ACCESS_TOKEN_EXPIRATION=${ACCESS_TOKEN_EXPIRATION}" >> .env
+          echo "REFRESH_TOKEN_EXPIRATION=${REFRESH_TOKEN_EXPIRATION}" >> .env
+          echo "JWT_ISSUER=${JWT_ISSUER}" >> .env
+          echo "JWT_AUDIENCE=${JWT_AUDIENCE}" >> .env
 
       - name: Create frontend env file
         working-directory: ./frontend
