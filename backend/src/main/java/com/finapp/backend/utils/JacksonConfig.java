@@ -1,4 +1,4 @@
-package com.finapp.backend.utils.config;
+package com.finapp.backend.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

@@ -1,6 +1,7 @@
 package com.finapp.backend.loan.service;
 
 import com.finapp.backend.exception.CustomFinAppException;
+import com.finapp.backend.exception.LoanException;
 import com.finapp.backend.exception.SaveEntityException;
 import com.finapp.backend.loan.dto.LoanDto;
 import com.finapp.backend.loan.dto.LoanMapper;
@@ -57,8 +58,8 @@ public class LoanServiceImpl implements LoanService {
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            throw new CustomFinAppException(e.getLocalizedMessage());
+            LOGGER.error(e.getMessage(), e);
+            throw new LoanException("An unexpected error occurred while trying to retrieve loan.");
         }
     }
 
@@ -72,8 +73,8 @@ public class LoanServiceImpl implements LoanService {
             return saveLoan(existingLoan);
 
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            throw new CustomFinAppException(e.getLocalizedMessage());
+            LOGGER.error(e.getMessage(), e);
+            throw new LoanException("An unexpected error occurred while trying to update loan information.");
         }
     }
 
@@ -86,8 +87,8 @@ public class LoanServiceImpl implements LoanService {
             return LoanMapper.mapLoanToDto(savedUser);
 
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            throw new SaveEntityException("An error occurred while trying to save loan.");
+            LOGGER.error(e.getMessage(), e);
+            throw new LoanException("An error occurred while trying to save loan.");
         }
     }
 
@@ -110,7 +111,7 @@ public class LoanServiceImpl implements LoanService {
             loanRepository.delete(loan);
         } catch (Exception e) {
             LOGGER.error("An unexpected error occurred while trying to delete loan.", e);
-            throw new CustomFinAppException("An unexpected error occurred while trying to delete loan.");
+            throw new LoanException("An unexpected error occurred while trying to delete loan.");
         }
     }
 

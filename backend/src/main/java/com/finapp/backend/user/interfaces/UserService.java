@@ -16,7 +16,7 @@ public interface UserService {
 
     UserDto retrieveUser(String id);
 
-    UserDto saveUser(User user);
+    User saveUser(User user);
 
     boolean userExists(String email);
 

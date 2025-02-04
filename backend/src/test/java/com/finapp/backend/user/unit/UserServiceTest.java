@@ -186,11 +186,11 @@ public class UserServiceTest {
             //Arrange
             when(userRepository.save(testUser)).thenReturn(testUser);
             //Act
-            UserDto returnedDto = userService.saveUser(testUser);
+            User savedUser = userService.saveUser(testUser);
             //Assert
-            assertNotNull(returnedDto);
+            assertNotNull(savedUser);
             verify(userRepository, times(1)).save(testUser);
-            assertThat(returnedDto)
+            assertThat(savedUser)
                     .hasFieldOrPropertyWithValue("id", testUser.getId().toString())
                     .hasFieldOrPropertyWithValue("firstname", testUser.getFirstname())
                     .hasFieldOrPropertyWithValue("createdAt", testUser.getCreatedAt())

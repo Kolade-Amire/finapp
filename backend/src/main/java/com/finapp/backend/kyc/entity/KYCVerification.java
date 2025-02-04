@@ -1,12 +1,13 @@
-package com.finapp.backend.user.entity;
+package com.finapp.backend.kyc.entity;
 
-import com.finapp.backend.user.enums.KYCLevel;
-import com.finapp.backend.user.enums.VerificationStatus;
+import com.finapp.backend.user.entity.User;
+import com.finapp.backend.kyc.enums.KYCLevel;
+import com.finapp.backend.kyc.enums.KYCVerificationStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -29,7 +30,7 @@ public class KYCVerification {
     private KYCLevel requestedLevel;
 
     @Enumerated(EnumType.STRING)
-    private VerificationStatus status;
+    private KYCVerificationStatus status;
 
     private String rejectionReason;
 
@@ -37,8 +38,8 @@ public class KYCVerification {
 
     private LocalDateTime reviewedAt;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "verification")
-    private List<KYCDocument> documents;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "verification", orphanRemoval = true)
+    private Set<KYCDocument> documents;
 
     @ManyToOne
     private User reviewedBy; // Admin/Compliance officer

@@ -1,26 +1,26 @@
 package com.finapp.backend.security.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.finapp.backend.security.entity.Token;
-import com.finapp.backend.security.dto.AuthenticationRequest;
-import com.finapp.backend.security.dto.AuthenticationResponse;
-import com.finapp.backend.security.dto.RegistrationRequest;
-import com.finapp.backend.security.dto.RegistrationResponse;
-import com.finapp.backend.user.entity.User;
-import com.finapp.backend.user.dto.UserDto;
-import com.finapp.backend.user.entity.UserPrincipal;
-import com.finapp.backend.utils.HttpResponse;
-import com.finapp.backend.dto.auth.*;
 import com.finapp.backend.exception.CustomFinAppException;
 import com.finapp.backend.exception.EntityAlreadyExistException;
 import com.finapp.backend.exception.PasswordsDoNotMatchException;
 import com.finapp.backend.exception.SaveEntityException;
+import com.finapp.backend.security.dto.AuthenticationRequest;
+import com.finapp.backend.security.dto.AuthenticationResponse;
+import com.finapp.backend.security.dto.RegistrationRequest;
+import com.finapp.backend.security.dto.RegistrationResponse;
+import com.finapp.backend.security.entity.Token;
+import com.finapp.backend.security.enums.Role;
 import com.finapp.backend.security.repository.AuthenticationService;
 import com.finapp.backend.security.repository.TokenService;
-import com.finapp.backend.user.interfaces.UserService;
-import com.finapp.backend.security.enums.Role;
-import com.finapp.backend.utils.AppConstants;
+import com.finapp.backend.user.dto.UserDto;
 import com.finapp.backend.user.dto.UserDtoMapper;
+import com.finapp.backend.user.entity.User;
+import com.finapp.backend.user.entity.UserPrincipal;
+import com.finapp.backend.kyc.service.KYCService;
+import com.finapp.backend.user.interfaces.UserService;
+import com.finapp.backend.utils.AppConstants;
+import com.finapp.backend.utils.HttpResponse;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -51,6 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
     private final ObjectMapper objectMapper;
+    private final KYCService kycService;
 
     private String doPasswordsMatch(String p1, String p2) {
         if (!p1.equals(p2)) {
@@ -83,7 +84,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .isEmailVerified(true)
                 .build();
 
-        UserDto savedUser = userService.saveUser(user);
+        User savedUser = userService.saveUser(user);
+        kycService.createNewProfile(savedUser);  //create KYC profile for new user
+        UserDto userDto = UserDtoMapper.mapUserToDto(savedUser);
 
         var httpResponse = HttpResponse.builder()
                 .httpStatus(HttpStatus.CREATED)
@@ -95,7 +98,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         return RegistrationResponse.builder()
                 .httpResponse(httpResponse)
-                .user(savedUser)
+                .user(userDto)
                 .build();
 
     }

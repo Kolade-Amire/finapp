@@ -1,4 +1,4 @@
-package com.finapp.backend.utils;
+package com.finapp.backend.security.validation;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;

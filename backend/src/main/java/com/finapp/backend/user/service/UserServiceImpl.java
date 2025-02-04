@@ -63,12 +63,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto saveUser(User user) {
+    public User saveUser(User user) {
         try {
-            User savedUser = userRepository.save(user);
-
-            return UserDtoMapper.mapUserToDto(savedUser);
-
+           return userRepository.save(user);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             throw new SaveEntityException("An error occurred while trying to save user.");
@@ -103,7 +100,8 @@ public class UserServiceImpl implements UserService {
                 existingUser.setFirstname(newDetails.getProfilePictureUrl());
             }
 
-            return saveUser(existingUser);
+            User savedUser = saveUser(existingUser);
+            return UserDtoMapper.mapUserToDto(savedUser);
 
         } catch (DataIntegrityViolationException e) {
             throw new CustomFinAppException("Phone number already used.");

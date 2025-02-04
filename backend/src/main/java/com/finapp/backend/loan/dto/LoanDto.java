@@ -18,8 +18,8 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 public class LoanDto {
-    private UUID id;
-    private UUID borrowerId;;
+    private String id;
+    private String borrowerId;;
     private BigDecimal loanPrincipal;
     private int tenureInMonths;
     private DisbursementStatus disbursementStatus;

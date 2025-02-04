@@ -6,8 +6,8 @@ public class LoanMapper {
 
     public static LoanDto mapLoanToDto(Loan loan){
         return LoanDto.builder()
-                .id(loan.getId())
-                .borrowerId(loan.getBorrowerId())
+                .id(loan.getId().toString())
+                .borrowerId(loan.getBorrowerId().toString())
                 .loanPrincipal(loan.getLoanPrincipal())
                 .tenureInMonths(loan.getTenureInMonths())
                 .disbursementStatus(loan.getDisbursementStatus())

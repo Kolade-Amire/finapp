@@ -1,7 +1,7 @@
 package com.finapp.backend.user.entity;
 
 import com.finapp.backend.security.enums.Role;
-import com.finapp.backend.user.enums.KYCLevel;
+import com.finapp.backend.kyc.enums.KYCLevel;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;

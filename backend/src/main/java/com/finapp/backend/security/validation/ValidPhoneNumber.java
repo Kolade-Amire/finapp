@@ -1,4 +1,4 @@
-package com.finapp.backend.utils;
+package com.finapp.backend.security.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -8,12 +8,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-//Annotation for validating email
-@Constraint(validatedBy = EmailValidator.class)
+@Constraint(validatedBy = PhoneNumberValidator.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidEmail {
-    String message() default "Invalid email format.";
+public @interface ValidPhoneNumber {
+    String message() default "Invalid phone number format.";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

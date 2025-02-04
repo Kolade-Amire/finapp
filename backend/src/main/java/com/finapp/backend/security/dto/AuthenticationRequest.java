@@ -1,6 +1,6 @@
 package com.finapp.backend.security.dto;
 
-import com.finapp.backend.utils.ValidEmail;
+import com.finapp.backend.security.validation.ValidEmail;
 import jakarta.validation.constraints.NotBlank;
 import lombok.ToString;
 import lombok.Getter;

@@ -1,6 +1,6 @@
-package com.finapp.backend.user.entity;
+package com.finapp.backend.kyc.entity;
 
-import com.finapp.backend.user.enums.KYCDocumentType;
+import com.finapp.backend.kyc.enums.KYCDocumentType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +21,8 @@ public class KYCDocument {
 
     @Enumerated(EnumType.STRING)
     private KYCDocumentType type;
+
+    private String documentId;
 
     private LocalDate expiryDate;
 

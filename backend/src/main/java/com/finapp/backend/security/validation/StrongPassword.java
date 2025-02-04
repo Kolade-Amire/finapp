@@ -1,4 +1,4 @@
-package com.finapp.backend.utils;
+package com.finapp.backend.security.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

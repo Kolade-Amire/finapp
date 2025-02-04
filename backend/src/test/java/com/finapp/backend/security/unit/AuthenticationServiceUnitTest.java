@@ -2,24 +2,22 @@ package com.finapp.backend.security.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finapp.backend.config.TestJacksonConfig;
-import com.finapp.backend.security.entity.Token;
-import com.finapp.backend.security.dto.AuthenticationRequest;
-import com.finapp.backend.security.dto.AuthenticationResponse;
-import com.finapp.backend.security.dto.RegistrationRequest;
-import com.finapp.backend.security.dto.RegistrationResponse;
-import com.finapp.backend.user.entity.User;
-import com.finapp.backend.user.dto.UserDto;
-import com.finapp.backend.user.entity.UserPrincipal;
-import com.finapp.backend.dto.auth.*;
 import com.finapp.backend.exception.CustomFinAppException;
 import com.finapp.backend.exception.EntityAlreadyExistException;
 import com.finapp.backend.exception.PasswordsDoNotMatchException;
 import com.finapp.backend.exception.TokenException;
-import com.finapp.backend.security.repository.TokenService;
-import com.finapp.backend.user.interfaces.UserService;
+import com.finapp.backend.security.dto.AuthenticationRequest;
+import com.finapp.backend.security.dto.AuthenticationResponse;
+import com.finapp.backend.security.dto.RegistrationRequest;
+import com.finapp.backend.security.dto.RegistrationResponse;
+import com.finapp.backend.security.entity.Token;
 import com.finapp.backend.security.enums.Role;
-import com.finapp.backend.security.service.JwtService;
+import com.finapp.backend.security.repository.TokenService;
 import com.finapp.backend.security.service.AuthenticationServiceImpl;
+import com.finapp.backend.security.service.JwtService;
+import com.finapp.backend.user.entity.User;
+import com.finapp.backend.user.entity.UserPrincipal;
+import com.finapp.backend.user.interfaces.UserService;
 import com.finapp.backend.utils.AppConstants;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
@@ -133,7 +131,7 @@ public class AuthenticationServiceUnitTest {
             //Arrange
             when(userService.userExists(TEST_EMAIL)).thenReturn(false);
             when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-            when(userService.saveUser(any(User.class))).thenReturn(new UserDto());
+            when(userService.saveUser(any(User.class))).thenReturn(new User());
 
             // Act
             RegistrationResponse response = authenticationService.register(registrationRequest);

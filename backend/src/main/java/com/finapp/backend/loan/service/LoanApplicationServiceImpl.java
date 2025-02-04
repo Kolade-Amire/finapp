@@ -1,5 +1,7 @@
 package com.finapp.backend.loan.service;
 
+import com.finapp.backend.loan.dto.LoanApplicationDto;
+import com.finapp.backend.loan.dto.LoanApplicationRequest;
 import com.finapp.backend.loan.interfaces.LoanApplicationService;
 import com.finapp.backend.loan.repository.LoanApplicationRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,4 +11,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class LoanApplicationServiceImpl implements LoanApplicationService {
     private final LoanApplicationRepository loanApplicationRepository;
+
+    @Override
+    public LoanApplicationDto applyForLoan(LoanApplicationRequest request) {
+        return null;
+    }
 }

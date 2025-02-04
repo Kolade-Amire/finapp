@@ -1,8 +1,8 @@
 package com.finapp.backend.security.dto;
 
-import com.finapp.backend.utils.StrongPassword;
-import com.finapp.backend.utils.ValidEmail;
-import com.finapp.backend.utils.ValidPhoneNumber;
+import com.finapp.backend.security.validation.StrongPassword;
+import com.finapp.backend.security.validation.ValidEmail;
+import com.finapp.backend.security.validation.ValidPhoneNumber;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
